@@ -690,8 +690,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ session, onLogout }) => {
 
         toast.success('作业任务已启动');
         setSelectedWorks({});
-        setTaskFilter('active');
         handleTabChange('tasks');
+        setTaskFilter('active');
         void fetchTasks();
         void fetchCourses();
         return;
@@ -720,8 +720,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ session, onLogout }) => {
 
         toast.success('考试任务已启动');
         setSelectedExams({});
-        setTaskFilter('active');
         handleTabChange('tasks');
+        setTaskFilter('active');
         void fetchTasks();
         void fetchCourses();
         return;
@@ -789,8 +789,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ session, onLogout }) => {
       });
 
       toast.success('任务已启动');
-      setTaskFilter('active');
       handleTabChange('tasks');
+      setTaskFilter('active');
       void fetchTasks();
       void fetchCourses();
       setSelectedCourses(new Set());

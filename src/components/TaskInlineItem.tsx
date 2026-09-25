@@ -284,7 +284,10 @@ export const TaskInlineItem: React.FC<TaskInlineItemProps> = ({ task, courseName
     const errorSummary = (failedUnits ?? 0) > 0
       ? compactError
           .split('，')
-          .filter((part) => !part.startsWith(`${taskUnitLabel}失败`))
+          .filter((part) => {
+            const normalizedPart = part.trim();
+            return !new RegExp(`^${taskUnitLabel}(?:处理)?失败\\s*${failedUnits}\\s*个$`).test(normalizedPart);
+          })
           .join('，')
       : compactError;
     return [unitSummary, errorSummary].filter(Boolean).join('，') || (effectiveStatus === 'failed' ? '任务未成功完成' : '部分任务未完成');
