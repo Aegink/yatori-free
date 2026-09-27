@@ -23,6 +23,7 @@ import { readSavedAccount, saveSavedAccount } from "@/lib/savedAccount";
 import { toast } from "sonner";
 import { LoginCredentialsStep } from "./login/LoginCredentialsStep";
 import { BrandMark } from "./BrandMark";
+import { YATORI_QQ_GROUP_URL } from "@/lib/externalLinks";
 
 interface LoginProps {
   onLoginSuccess: (session: AuthSession) => void;
@@ -135,6 +136,23 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
 
   return (
     <div className="login-page flex min-h-screen flex-col items-center justify-center bg-background px-4 py-8 transition-colors duration-240">
+      <a
+        href={YATORI_QQ_GROUP_URL}
+        target="_blank"
+        rel="noreferrer"
+        aria-label="加入 QQ 群组"
+        title="加入 QQ 群组"
+        className="fixed right-4 top-4 z-10 flex size-11 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        <svg
+          aria-hidden="true"
+          className="size-6"
+          viewBox="0 0 1024 1024"
+          fill="currentColor"
+        >
+          <path d="M824.8 613.2c-16-51.4-34.4-94.6-62.7-165.3C766.5 262.2 689.3 112 511.5 112 331.7 112 256.2 265.2 261 447.9c-28.4 70.8-46.7 113.7-62.7 165.3-34 109.5-23 154.8-14.6 155.8 18 2.2 70.1-82.4 70.1-82.4 0 49 25.2 112.9 79.8 159-26.4 8.1-85.7 29.9-71.6 53.8 11.4 19.3 196.2 12.3 249.5 6.3 53.3 6 238.1 13 249.5-6.3 14.1-23.8-45.3-45.7-71.6-53.8 54.6-46.2 79.8-110.1 79.8-159 0 0 52.1 84.6 70.1 82.4 8.5-1.1 19.5-46.4-14.5-155.8z" />
+        </svg>
+      </a>
       <Card className="w-full max-w-[450px] overflow-hidden border-border/70 shadow-floating md:max-w-[min(65.6vw,1024px)]">
         {/* Google Accent Bar */}
         <div className="google-accent-bar">
