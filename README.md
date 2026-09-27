@@ -36,42 +36,30 @@
 - 直接提交
 - 仅保存不提交
 
-### 3. 自动监听并执行签到
+### 3. 增加学习次数/学习时长
 
-受支持的签到类型：
-- 普通签到
-- 位置签到
-- 手势签到
-- 签到码签到
-
-> [!WARNING]
->
-> - 暂不支持**二维码签到、拍照签到**
-> - 需要在签到任务发起前开始监听，否则无法执行
-
-### 4. 增加学习次数/学习时长
-
-该网页服务提供读取、提交学习次数与学习时长。
+该网页服务提供读取、增加学习次数与学习时长。
 
 你可以在 `学习通客户端 APP` - `课程` - `学习记录` 中查看到自己在该课程的学习次数与学习时长数据
 
-### 5. 邮件通知
+### 4. 邮件通知
 
 当任务完成/失败时，网页服务会通过邮件通知用户。
 
 > （默认不启用该功能）
 
-### 6. 课程文档资源下载
+### 5. 课程文档资源下载
 
 该网页服务提供课程章节中的 PDF 文档、PPT 演示文稿等资源的下载功能，用于整理相关学习资料以便查阅。
 
-## 服务端技术选型
+## 服务端
 
-- ![Go 1.27.1](https://img.shields.io/badge/Go-1.27.1-blue.svg?style=flat-square&logo=go&logoColor=white)
-- ![net/http](https://img.shields.io/badge/net/http-1.27.1-blue.svg?style=flat-square&logo=go&logoColor=white)
+- ![Go 1.27.1](https://img.shields.io/badge/Go&nbsp;1.27.1-net/http-blue.svg?style=flat-square&logo=go&logoColor=white)
 - ![SQLite](https://img.shields.io/badge/SQLite-3-yellow.svg?style=flat-square&logo=sqlite&logoColor=white)
 - ![systemd](https://img.shields.io/badge/systemd-257-red.svg?style=flat-square&logo=systemd&logoColor=white)
-- ![Cloudflare Tunnel](https://img.shields.io/badge/Cloudflare%20Tunnel-2026.9.1-orange.svg?style=flat-square&logo=cloudflare&logoColor=white)
+- ![Cloudflare Tunnel](https://img.shields.io/badge/Cloudflare%20Tunnel-2026.9.3-orange.svg?style=flat-square&logo=cloudflare&logoColor=white)
+
+**后端以闭源方式提供网络服务，该仓库仅提供网页服务的前端面板**
 
 ## 参考项目
 
@@ -79,7 +67,6 @@
 | --- | --- | --- |
 | [yatori-go-core](https://github.com/yatori-dev/yatori-go-core) | 学习通任务处理核心 | MIT |
 | [chaoxing_tool](https://github.com/liuyunfz/chaoxing_tool) | 学习通课程文档资源下载、学习次数/时长参考实现 | GPL-3.0 |
-| [PassChaoxing](https://github.com/qintaiyang/PassChaoxing) | 学习通签到协议参考 | MIT |
 | [CxKitty](https://github.com/MMitsuha/CxKitty) | 学习通扫码登录协议参考 | GPL-3.0 |
 
 ## 声明
