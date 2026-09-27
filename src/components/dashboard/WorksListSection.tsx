@@ -27,6 +27,7 @@ interface WorksListSectionProps {
   courseDetailsMap: Record<string, CourseDetails>;
   loadingDetails: Record<string, boolean>;
   selectedWorks: Record<string, Set<string>>;
+  showDeadlineBadges: boolean;
   hideUnavailable: boolean;
   submitMode: SubmitMode;
   onToggleSelectWork: (classId: string, workId: string) => void;
@@ -48,6 +49,7 @@ export function WorksListSection({
   courseDetailsMap,
   loadingDetails,
   selectedWorks,
+  showDeadlineBadges,
   hideUnavailable,
   submitMode,
   onToggleSelectWork,
@@ -257,9 +259,9 @@ export function WorksListSection({
                               const title = getWorkItemTitle(work);
                               const isSelected = courseSelected.has(work.id);
                               const isRunnable = work.runnable;
-                              const urgencyLabel = getDeadlineUrgencyLabel(
-                                work.endAt,
-                              );
+                              const urgencyLabel = showDeadlineBadges
+                                ? getDeadlineUrgencyLabel(work.endAt)
+                                : null;
 
                               return (
                                 <button

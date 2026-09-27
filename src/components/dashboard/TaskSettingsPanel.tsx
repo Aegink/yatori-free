@@ -7,18 +7,18 @@ import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BypassDailyStudyLimitConfirmDialog } from './BypassDailyStudyLimitConfirmDialog';
 
-type SettingSwitchKey = 'bypassDailyStudyLimit' | 'doChapterTest';
+type SettingSwitchKey = 'bypassDailyStudyLimit' | 'showDeadlineBadges';
 
 interface TaskSettingsPanelProps {
   bypassDailyStudyLimit: boolean;
-  doChapterTest: boolean;
+  showDeadlineBadges: boolean;
   onUnauthorized: () => void;
   onSettingSwitch: (key: SettingSwitchKey, checked: boolean) => void;
 }
 
 export function TaskSettingsPanel({
   bypassDailyStudyLimit,
-  doChapterTest,
+  showDeadlineBadges,
   onUnauthorized,
   onSettingSwitch,
 }: TaskSettingsPanelProps) {
@@ -72,23 +72,6 @@ export function TaskSettingsPanel({
                   className="google-mode-switch shrink-0"
                 />
               </div>
-
-              <div className="flex items-center justify-between rounded-xl border border-border/60 bg-muted/20 p-3.5 shadow-xs transition-[border-color] duration-200 hover:border-border sm:p-5">
-                <Label
-                  htmlFor="doChapterTest"
-                  className="block cursor-pointer text-sm font-semibold text-foreground"
-                >
-                  章节测试自动答题
-                </Label>
-                <Switch
-                  id="doChapterTest"
-                  checked={doChapterTest}
-                  onCheckedChange={(checked: boolean) =>
-                    onSettingSwitch('doChapterTest', checked)
-                  }
-                  className="shrink-0"
-                />
-              </div>
             </section>
 
             <section
@@ -138,6 +121,23 @@ export function TaskSettingsPanel({
                     );
                   })}
                 </div>
+              </div>
+              
+              <div className="flex items-center justify-between rounded-xl border border-border/60 bg-muted/20 p-3.5 shadow-xs transition-[border-color] duration-200 hover:border-border sm:p-5">
+                <Label
+                  htmlFor="showDeadlineBadges"
+                  className="block cursor-pointer text-sm font-semibold text-foreground"
+                >
+                  临期作业/考试徽章提醒
+                </Label>
+                <Switch
+                  id="showDeadlineBadges"
+                  checked={showDeadlineBadges}
+                  onCheckedChange={(checked: boolean) =>
+                    onSettingSwitch('showDeadlineBadges', checked)
+                  }
+                  className="shrink-0"
+                />
               </div>
             </section>
 

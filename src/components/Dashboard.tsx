@@ -36,14 +36,14 @@ interface DashboardProps {
 
 interface SettingsFormState {
   bypassDailyStudyLimit: boolean;
-  doChapterTest: boolean;
+  showDeadlineBadges: boolean;
   workAutoSubmit: 0 | 1 | 2;
   examAutoSubmit: 0 | 1 | 2;
 }
 
 interface PersistedSettingsFormState {
   settingsVersion: number;
-  doChapterTest: boolean;
+  showDeadlineBadges: boolean;
 }
 
 interface TaskExecutionSettingsState {
@@ -61,7 +61,7 @@ const TASK_SETTINGS_VERSION = 2;
 
 const DEFAULT_PERSISTED_SETTINGS: PersistedSettingsFormState = {
   settingsVersion: TASK_SETTINGS_VERSION,
-  doChapterTest: true,
+  showDeadlineBadges: true,
 };
 
 const DEFAULT_TASK_EXECUTION_SETTINGS: TaskExecutionSettingsState = {
@@ -106,7 +106,7 @@ function readPersistedSettings(accountId: string | null | undefined): PersistedS
     const settings = parsed as Partial<PersistedSettingsFormState>;
     return {
       settingsVersion: TASK_SETTINGS_VERSION,
-      doChapterTest: settings.doChapterTest !== false,
+      showDeadlineBadges: settings.showDeadlineBadges !== false,
     };
   } catch (error) {
     console.error('Failed to parse task settings', error);
@@ -271,14 +271,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ session, onLogout }) => {
 
   const {
     bypassDailyStudyLimit,
-    doChapterTest,
+    showDeadlineBadges,
     workAutoSubmit,
     examAutoSubmit,
   } = settingsForm;
 
   const buildCoursesCustom = useCallback((overrides: Partial<CoursesCustom> = {}): CoursesCustom => {
     return {
-      doChapterTest,
+      doChapterTest: true,
       doWork: false,
       workAutoSubmit: 0,
       doExam: false,
@@ -288,7 +288,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ session, onLogout }) => {
       coursesSettings: [],
       ...overrides,
     };
-  }, [doChapterTest]);
+  }, []);
 
   const studyIncrementCourse = useMemo(
     () => courses.find((course) => course.key === studyIncrementCourseKey) ?? null,
@@ -525,16 +525,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ session, onLogout }) => {
       : visibleCourses;
   }, [courseSearchQuery, visibleCourses]);
 
-  const selectableCourses = filteredCourses.filter(course => !course.processing);
   const incompleteSelectableCourses = visibleCourses.filter((course) => {
     if (course.processing) return false;
     if (typeof course.jobCount !== 'number' || typeof course.jobFinishCount !== 'number') return false;
     return course.jobFinishCount < course.jobCount;
   });
-  const isAllSelected = selectableCourses.length > 0 && selectableCourses.every(course => selectedCourses.has(course.key));
-  const isSomeSelected = selectableCourses.length > 0 && selectableCourses.some(course => selectedCourses.has(course.key));
-  const isAllIncompleteSelected = incompleteSelectableCourses.length > 0
-    && incompleteSelectableCourses.every(course => selectedCourses.has(course.key));
 
   const estimatedTaskDuration = useMemo(() => {
     if (selectedCourses.size === 0) return null;
@@ -563,39 +558,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ session, onLogout }) => {
     if (minutes === 0) return `${hours}小时`;
     return `${hours}小时${minutes}分钟`;
   }, [bypassDailyStudyLimit, courses, selectedCourses]);
-
-  const handleToggleSelectAll = () => {
-    if (isAllSelected) {
-      setSelectedCourses(prev => {
-        const next = new Set(prev);
-        selectableCourses.forEach(course => next.delete(course.key));
-        return next;
-      });
-    } else {
-      setSelectedCourses(prev => {
-        const next = new Set(prev);
-        selectableCourses.forEach(course => next.add(course.key));
-        return next;
-      });
-    }
-  };
-
-  const handleToggleSelectIncomplete = () => {
-    if (isAllIncompleteSelected) {
-      setSelectedCourses((prev) => {
-        const next = new Set(prev);
-        incompleteSelectableCourses.forEach((course) => next.delete(course.key));
-        return next;
-      });
-      return;
-    }
-
-    setSelectedCourses((prev) => {
-      const next = new Set(prev);
-      incompleteSelectableCourses.forEach((course) => next.add(course.key));
-      return next;
-    });
-  };
 
   const toggleExpandCourse = (courseKey: string) => {
     if (expandedCourses.has(courseKey)) {
@@ -845,7 +807,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ session, onLogout }) => {
     setTaskStartConfirmOpen(true);
   };
 
-  const updateSettingSwitch = (key: keyof SettingsFormState, checked: boolean) => {
+  const updateSettingSwitch = (key: 'bypassDailyStudyLimit' | 'showDeadlineBadges', checked: boolean) => {
     if (key === 'bypassDailyStudyLimit') {
       setTaskExecutionSettings((previous) => ({ ...previous, bypassDailyStudyLimit: checked }));
       return;
@@ -1070,11 +1032,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ session, onLogout }) => {
             coursesError={coursesError}
             courseSearch={courseSearch}
             courseSearchQuery={courseSearchQuery}
-            selectableCourses={selectableCourses}
             incompleteSelectableCourses={incompleteSelectableCourses}
-            isAllSelected={isAllSelected}
-            isSomeSelected={isSomeSelected}
-            isAllIncompleteSelected={isAllIncompleteSelected}
             selectedCourses={selectedCourses}
             selectedWorks={selectedWorks}
             selectedExams={selectedExams}
@@ -1094,15 +1052,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ session, onLogout }) => {
             courseNameByIdentifier={courseNameByIdentifier}
             courseTaskPointProgressByIdentifier={courseTaskPointProgressByIdentifier}
             bypassDailyStudyLimit={bypassDailyStudyLimit}
-            doChapterTest={doChapterTest}
+            showDeadlineBadges={showDeadlineBadges}
             workAutoSubmit={workAutoSubmit}
             examAutoSubmit={examAutoSubmit}
             onUnauthorized={onLogout}
             onRefreshCourses={fetchCourses}
             onSearchChange={setCourseSearch}
             onSearchQueryChange={setCourseSearchQuery}
-            onToggleSelectAll={handleToggleSelectAll}
-            onToggleSelectIncomplete={handleToggleSelectIncomplete}
             onToggleCourseSelection={toggleCourseSelection}
             onOpenStudyIncrementSettings={openStudyIncrementSettings}
             onStopTask={handleStopTask}

@@ -33,11 +33,7 @@ interface DashboardMainContentProps {
   coursesError: string | null;
   courseSearch: string;
   courseSearchQuery: string;
-  selectableCourses: CourseSummary[];
   incompleteSelectableCourses: CourseSummary[];
-  isAllSelected: boolean;
-  isSomeSelected: boolean;
-  isAllIncompleteSelected: boolean;
   selectedCourses: Set<string>;
   selectedWorks: Record<string, Set<string>>;
   selectedExams: Record<string, Set<string>>;
@@ -57,15 +53,13 @@ interface DashboardMainContentProps {
   courseNameByIdentifier: Record<string, string>;
   courseTaskPointProgressByIdentifier: CourseTaskPointProgressMap;
   bypassDailyStudyLimit: boolean;
-  doChapterTest: boolean;
+  showDeadlineBadges: boolean;
   workAutoSubmit: 0 | 1 | 2;
   examAutoSubmit: 0 | 1 | 2;
   onUnauthorized: () => void;
   onRefreshCourses: () => void;
   onSearchChange: (value: string) => void;
   onSearchQueryChange: (value: string) => void;
-  onToggleSelectAll: () => void;
-  onToggleSelectIncomplete: () => void;
   onToggleCourseSelection: (courseKey: string) => void;
   onOpenStudyIncrementSettings: (courseKey: string) => void;
   onStopTask: (taskId: string) => void;
@@ -74,7 +68,7 @@ interface DashboardMainContentProps {
   onTaskFilterChange: (filter: 'active' | 'completed') => void;
   onRefreshTasks: () => void;
   onSettingSwitch: (
-    key: 'bypassDailyStudyLimit' | 'doChapterTest',
+    key: 'bypassDailyStudyLimit' | 'showDeadlineBadges',
     checked: boolean,
   ) => void;
   onWorkAutoSubmitChange: (value: 0 | 1 | 2) => void;
@@ -96,11 +90,7 @@ export function DashboardMainContent({
   coursesError,
   courseSearch,
   courseSearchQuery,
-  selectableCourses,
   incompleteSelectableCourses,
-  isAllSelected,
-  isSomeSelected,
-  isAllIncompleteSelected,
   selectedCourses,
   selectedWorks,
   selectedExams,
@@ -120,15 +110,13 @@ export function DashboardMainContent({
   courseNameByIdentifier,
   courseTaskPointProgressByIdentifier,
   bypassDailyStudyLimit,
-  doChapterTest,
+  showDeadlineBadges,
   workAutoSubmit,
   examAutoSubmit,
   onUnauthorized,
   onRefreshCourses,
   onSearchChange,
   onSearchQueryChange,
-  onToggleSelectAll,
-  onToggleSelectIncomplete,
   onToggleCourseSelection,
   onOpenStudyIncrementSettings,
   onStopTask,
@@ -152,16 +140,18 @@ export function DashboardMainContent({
     let exams = 0;
 
     Object.values(courseDetailsMap).forEach((details) => {
-      works += (details.works ?? []).filter(
-        (work) => work.runnable && getDeadlineUrgencyLabel(work.endAt),
-      ).length;
-      exams += (details.exams ?? []).filter(
-        (exam) => exam.runnable && getDeadlineUrgencyLabel(exam.endAt),
-      ).length;
+      if (showDeadlineBadges) {
+        works += (details.works ?? []).filter(
+          (work) => work.runnable && getDeadlineUrgencyLabel(work.endAt),
+        ).length;
+        exams += (details.exams ?? []).filter(
+          (exam) => exam.runnable && getDeadlineUrgencyLabel(exam.endAt),
+        ).length;
+      }
     });
 
     return { works, exams };
-  }, [courseDetailsMap]);
+  }, [courseDetailsMap, showDeadlineBadges]);
 
   return (
     <main
@@ -230,11 +220,6 @@ export function DashboardMainContent({
               coursesError={coursesError}
               courseSearch={courseSearch}
               courseSearchQuery={courseSearchQuery}
-              selectableCourses={selectableCourses}
-              incompleteSelectableCourses={incompleteSelectableCourses}
-              isAllSelected={isAllSelected}
-              isSomeSelected={isSomeSelected}
-              isAllIncompleteSelected={isAllIncompleteSelected}
               selectedCourses={selectedCourses}
               expandedCourses={expandedCourses}
               fullyExpandedCourseOutlines={fullyExpandedCourseOutlines}
@@ -244,8 +229,6 @@ export function DashboardMainContent({
               onRefresh={onRefreshCourses}
               onSearchChange={onSearchChange}
               onSearchQueryChange={onSearchQueryChange}
-              onToggleSelectAll={onToggleSelectAll}
-              onToggleSelectIncomplete={onToggleSelectIncomplete}
               onToggleCourseSelection={onToggleCourseSelection}
               onStopTask={onStopTask}
               onToggleExpandCourse={onToggleExpandCourse}
@@ -259,6 +242,7 @@ export function DashboardMainContent({
               courseDetailsMap={courseDetailsMap}
               loadingDetails={loadingDetails}
               selectedWorks={selectedWorks}
+              showDeadlineBadges={showDeadlineBadges}
               submitMode={workAutoSubmit}
               onSubmitModeChange={onWorkAutoSubmitChange}
               onToggleSelectWork={onToggleSelectWork}
@@ -273,6 +257,7 @@ export function DashboardMainContent({
               courseDetailsMap={courseDetailsMap}
               loadingDetails={loadingDetails}
               selectedExams={selectedExams}
+              showDeadlineBadges={showDeadlineBadges}
               submitMode={examAutoSubmit}
               onSubmitModeChange={onExamAutoSubmitChange}
               onToggleSelectExam={onToggleSelectExam}
@@ -283,7 +268,7 @@ export function DashboardMainContent({
             <TabsContent value="settings" className="m-0 outline-none">
               <TaskSettingsPanel
                 bypassDailyStudyLimit={bypassDailyStudyLimit}
-                doChapterTest={doChapterTest}
+                showDeadlineBadges={showDeadlineBadges}
                 onUnauthorized={onUnauthorized}
                 onSettingSwitch={onSettingSwitch}
               />

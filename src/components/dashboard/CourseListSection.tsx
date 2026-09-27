@@ -16,7 +16,6 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { TabsContent } from '@/components/ui/tabs';
 import { CourseCheckbox } from './CourseCheckbox';
-import { CourseBulkSelectionMenu } from './CourseBulkSelectionMenu';
 
 interface CourseListSectionProps {
   accountId?: string;
@@ -26,11 +25,6 @@ interface CourseListSectionProps {
   coursesError: string | null;
   courseSearch: string;
   courseSearchQuery: string;
-  selectableCourses: CourseSummary[];
-  incompleteSelectableCourses: CourseSummary[];
-  isAllSelected: boolean;
-  isSomeSelected: boolean;
-  isAllIncompleteSelected: boolean;
   selectedCourses: Set<string>;
   expandedCourses: Set<string>;
   fullyExpandedCourseOutlines: Set<string>;
@@ -40,8 +34,6 @@ interface CourseListSectionProps {
   onRefresh: () => void;
   onSearchChange: (value: string) => void;
   onSearchQueryChange: (value: string) => void;
-  onToggleSelectAll: () => void;
-  onToggleSelectIncomplete: () => void;
   onToggleCourseSelection: (courseKey: string) => void;
   onStopTask: (taskId: string) => void;
   onToggleExpandCourse: (courseKey: string) => void;
@@ -73,11 +65,6 @@ export function CourseListSection({
   coursesError,
   courseSearch,
   courseSearchQuery,
-  selectableCourses,
-  incompleteSelectableCourses,
-  isAllSelected,
-  isSomeSelected,
-  isAllIncompleteSelected,
   selectedCourses,
   expandedCourses,
   fullyExpandedCourseOutlines,
@@ -87,8 +74,6 @@ export function CourseListSection({
   onRefresh,
   onSearchChange,
   onSearchQueryChange,
-  onToggleSelectAll,
-  onToggleSelectIncomplete,
   onToggleCourseSelection,
   onStopTask,
   onToggleExpandCourse,
@@ -108,16 +93,6 @@ export function CourseListSection({
             <CardTitle className="hidden whitespace-nowrap text-sm font-semibold sm:block lg:hidden">
               课程列表
             </CardTitle>
-            {selectableCourses.length > 0 && (
-              <CourseBulkSelectionMenu
-                allSelected={isAllSelected}
-                allSelectionIndeterminate={isSomeSelected && !isAllSelected}
-                incompleteAvailable={incompleteSelectableCourses.length > 0}
-                incompleteSelected={isAllIncompleteSelected}
-                onToggleAll={onToggleSelectAll}
-                onToggleIncomplete={onToggleSelectIncomplete}
-              />
-            )}
           </div>
           <div className="flex min-w-0 flex-1 items-center justify-end gap-1.5 sm:gap-2">
             <div className="group relative min-w-0 flex-1 sm:max-w-xs">

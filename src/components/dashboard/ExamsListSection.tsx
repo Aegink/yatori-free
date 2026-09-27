@@ -27,6 +27,7 @@ interface ExamsListSectionProps {
   courseDetailsMap: Record<string, CourseDetails>;
   loadingDetails: Record<string, boolean>;
   selectedExams: Record<string, Set<string>>;
+  showDeadlineBadges: boolean;
   hideUnavailable: boolean;
   submitMode: SubmitMode;
   onToggleSelectExam: (classId: string, examId: string) => void;
@@ -48,6 +49,7 @@ export function ExamsListSection({
   courseDetailsMap,
   loadingDetails,
   selectedExams,
+  showDeadlineBadges,
   hideUnavailable,
   submitMode,
   onToggleSelectExam,
@@ -260,9 +262,9 @@ export function ExamsListSection({
                               const title = getExamItemTitle(exam);
                               const isSelected = courseSelected.has(exam.id);
                               const isRunnable = exam.runnable;
-                              const urgencyLabel = getDeadlineUrgencyLabel(
-                                exam.endAt,
-                              );
+                              const urgencyLabel = showDeadlineBadges
+                                ? getDeadlineUrgencyLabel(exam.endAt)
+                                : null;
 
                               return (
                                 <button
