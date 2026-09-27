@@ -236,35 +236,39 @@ export function CourseListSection({
                         />
                           <button
                             type="button"
-                            className="min-w-0 flex-1 text-left"
+                            className="min-w-0 w-full text-left"
                             onClick={() => onToggleCourseSelection(course.key)}
                             aria-pressed={isSelected}
                           >
-                          <div className="flex flex-wrap items-center gap-2">
-                            <h3 className="truncate text-xs font-semibold text-foreground sm:text-sm">{course.courseName}</h3>
-                            {isProcessing && (
-                              <Badge variant="outline" className="border-warning/20 bg-warning-container text-warning">
-                                处理中
-                              </Badge>
-                            )}
-                          {(course.beginDate || course.endDate) && (
-                            <p className="mt-1 text-[11px] text-muted-foreground">
-                              开课时间：{formatCourseDate(course.beginDate) ?? '未设置'}~{formatCourseDate(course.endDate) ?? '未设置'}
-                            </p>
-                          )}
-                          {processingTaskLabel && (
-                            <span className="mt-1 inline-flex w-fit items-center rounded-md bg-muted px-1.5 py-0.5 font-mono text-xs text-muted-foreground">
-                              #{processingTaskLabel}
-                            </span>
-                          )}
-                          {jobRate !== null && jobProgressLabel && (
-                            <div className="mt-1.5 grid w-full max-w-lg grid-cols-[minmax(0,1fr)_7rem] items-center gap-2 sm:mt-2 sm:grid-cols-[minmax(0,1fr)_8rem] sm:gap-3">
-                              <Progress value={jobRate} className={`h-1.5 bg-muted ${isProcessing ? 'progress-running' : ''}`} />
-                              <span className="whitespace-nowrap text-xs font-semibold tabular-nums text-muted-foreground">
-                                {jobProgressLabel}
-                              </span>
+                          <div className="sm:flex sm:min-w-0 sm:items-center sm:gap-4">
+                            <div className="min-w-0 sm:w-52 sm:shrink-0 lg:w-56">
+                              <div className="flex min-w-0 flex-wrap items-center gap-2">
+                                <h3 className="truncate text-xs font-semibold text-foreground sm:text-sm">{course.courseName}</h3>
+                                {isProcessing && (
+                                  <Badge variant="outline" className="border-warning/20 bg-warning-container text-warning">
+                                    处理中
+                                  </Badge>
+                                )}
+                              </div>
+                              {(course.beginDate || course.endDate) && (
+                                <p className="mt-1 truncate text-[11px] text-muted-foreground">
+                                  开课时间：{formatCourseDate(course.beginDate) ?? '未设置'}~{formatCourseDate(course.endDate) ?? '未设置'}
+                                </p>
+                              )}
+                              {processingTaskLabel && (
+                                <span className="mt-1 inline-flex w-fit items-center rounded-md bg-muted px-1.5 py-0.5 font-mono text-xs text-muted-foreground">
+                                  #{processingTaskLabel}
+                                </span>
+                              )}
                             </div>
-                          )}
+                            {jobRate !== null && jobProgressLabel && (
+                              <div className="mt-1.5 grid w-full min-w-0 flex-1 grid-cols-[minmax(0,1fr)_7rem] items-center gap-2 sm:mt-0 sm:grid-cols-[minmax(0,1fr)_8rem] sm:gap-3">
+                                <Progress value={jobRate} className={`h-1.5 bg-muted ${isProcessing ? 'progress-running' : ''}`} />
+                                <span className="whitespace-nowrap text-xs font-semibold tabular-nums text-muted-foreground">
+                                  {jobProgressLabel}
+                                </span>
+                              </div>
+                            )}
                           </div>
                           </button>
                       </div>
