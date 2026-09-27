@@ -1,29 +1,36 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import * as DialogPrimitive from "@radix-ui/react-dialog"
+import * as React from "react";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { XIcon } from "lucide-react"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { XIcon } from "lucide-react";
 
 function Sheet(props: React.ComponentProps<typeof DialogPrimitive.Root>) {
-  return <DialogPrimitive.Root data-slot="sheet" {...props} />
+  return <DialogPrimitive.Root data-slot="sheet" {...props} />;
 }
 
-function SheetTrigger(props: React.ComponentProps<typeof DialogPrimitive.Trigger>) {
-  return <DialogPrimitive.Trigger data-slot="sheet-trigger" {...props} />
+function SheetTrigger(
+  props: React.ComponentProps<typeof DialogPrimitive.Trigger>,
+) {
+  return <DialogPrimitive.Trigger data-slot="sheet-trigger" {...props} />;
 }
 
 function SheetClose(props: React.ComponentProps<typeof DialogPrimitive.Close>) {
-  return <DialogPrimitive.Close data-slot="sheet-close" {...props} />
+  return <DialogPrimitive.Close data-slot="sheet-close" {...props} />;
 }
 
-function SheetPortal(props: React.ComponentProps<typeof DialogPrimitive.Portal>) {
-  return <DialogPrimitive.Portal data-slot="sheet-portal" {...props} />
+function SheetPortal(
+  props: React.ComponentProps<typeof DialogPrimitive.Portal>,
+) {
+  return <DialogPrimitive.Portal data-slot="sheet-portal" {...props} />;
 }
 
-function SheetOverlay({ className, ...props }: React.ComponentProps<typeof DialogPrimitive.Overlay>) {
+function SheetOverlay({
+  className,
+  ...props
+}: React.ComponentProps<typeof DialogPrimitive.Overlay>) {
   return (
     <DialogPrimitive.Overlay
       data-slot="sheet-overlay"
@@ -33,7 +40,7 @@ function SheetOverlay({ className, ...props }: React.ComponentProps<typeof Dialo
       )}
       {...props}
     />
-  )
+  );
 }
 
 function SheetContent({
@@ -55,29 +62,57 @@ function SheetContent({
         {children}
       </DialogPrimitive.Content>
     </SheetPortal>
-  )
+  );
 }
 
 function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="sheet-header" className={cn("flex items-start justify-between gap-3 border-b border-border/50 px-3 py-3 sm:px-5 sm:py-4", className)} {...props} />
+  return (
+    <div
+      data-slot="sheet-header"
+      className={cn(
+        "flex items-start justify-between gap-3 border-b border-border/50 px-3 py-3 sm:px-5 sm:py-4",
+        className,
+      )}
+      {...props}
+    />
+  );
 }
 
 function SheetTitle(props: React.ComponentProps<typeof DialogPrimitive.Title>) {
-  return <DialogPrimitive.Title data-slot="sheet-title" className="font-heading text-base font-semibold" {...props} />
+  return (
+    <DialogPrimitive.Title
+      data-slot="sheet-title"
+      className="font-heading text-base font-semibold"
+      {...props}
+    />
+  );
 }
 
-function SheetDescription(props: React.ComponentProps<typeof DialogPrimitive.Description>) {
-  return <DialogPrimitive.Description data-slot="sheet-description" className="mt-1 text-xs text-muted-foreground" {...props} />
+function SheetDescription(
+  props: React.ComponentProps<typeof DialogPrimitive.Description>,
+) {
+  return (
+    <DialogPrimitive.Description
+      data-slot="sheet-description"
+      className="mt-1 text-xs text-muted-foreground"
+      {...props}
+    />
+  );
 }
 
 function SheetCloseButton() {
   return (
     <SheetClose asChild>
-      <Button size="icon" variant="ghost" className="h-11 w-11 shrink-0 sm:h-9 sm:w-9" aria-label="关闭任务抽屉">
+      <Button
+        size="icon"
+        variant="ghost"
+        className="h-11 w-11 shrink-0 sm:h-9 sm:w-9"
+        aria-label="关闭任务抽屉"
+      >
         <XIcon className="h-4 w-4" />
       </Button>
     </SheetClose>
-  )
+  );
 }
 
 export {
@@ -89,4 +124,4 @@ export {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-}
+};

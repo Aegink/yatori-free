@@ -9,7 +9,11 @@ import {
 } from 'lucide-react';
 import type { CourseDetails, CourseExamItem, CourseSummary } from '@/lib/api';
 import { getExamItemTitle } from '@/lib/api';
-import { formatLocalDateTime, getDeadlineUrgencyLabel, hasDeadlinePassed } from '@/lib/format';
+import {
+  formatLocalDateTime,
+  getDeadlineUrgencyLabel,
+  hasDeadlinePassed,
+} from '@/lib/format';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -32,7 +36,10 @@ interface ExamsListSectionProps {
 }
 
 function getVisibleExams(exams: CourseExamItem[], hideUnavailable: boolean) {
-  return exams.filter((exam) => !hasDeadlinePassed(exam.endAt) && (!hideUnavailable || exam.runnable));
+  return exams.filter(
+    (exam) =>
+      !hasDeadlinePassed(exam.endAt) && (!hideUnavailable || exam.runnable),
+  );
 }
 
 export function ExamsListSection({
@@ -64,7 +71,10 @@ export function ExamsListSection({
   const filteredCourses = useMemo(() => {
     return courses.filter((course) => {
       const details = courseDetailsMap[course.key];
-      return !details || getVisibleExams(details.exams ?? [], hideUnavailable).length > 0;
+      return (
+        !details ||
+        getVisibleExams(details.exams ?? [], hideUnavailable).length > 0
+      );
     });
   }, [courses, courseDetailsMap, hideUnavailable]);
 
@@ -73,16 +83,25 @@ export function ExamsListSection({
   }, [courses, courseDetailsMap]);
 
   return (
-    <TabsContent forceMount value="exams" className="m-0 outline-none data-[state=inactive]:hidden lg:min-h-0 lg:flex-1">
+    <TabsContent
+      forceMount
+      value="exams"
+      className="m-0 outline-none data-[state=inactive]:hidden lg:min-h-0 lg:flex-1"
+    >
       <Card className="rounded-none border-none bg-card py-0 shadow-none ring-0 sm:rounded-xl sm:py-4 sm:shadow-sm lg:flex lg:h-full lg:min-h-0 lg:flex-col">
         <CardHeader className="flex flex-row items-center justify-between border-b border-border/50 px-3 py-2.5 sm:px-6 sm:py-4">
           <div className="flex min-w-0 items-center gap-2">
             <GraduationCap className="h-5 w-5 shrink-0 text-primary" />
-            <CardTitle className="whitespace-nowrap text-sm font-semibold sm:text-base">考试</CardTitle>
+            <CardTitle className="whitespace-nowrap text-sm font-semibold sm:text-base">
+              考试
+            </CardTitle>
           </div>
 
           <div className="flex shrink-0 items-center gap-2">
-            <SubmitModeControl value={submitMode} onChange={onSubmitModeChange} />
+            <SubmitModeControl
+              value={submitMode}
+              onChange={onSubmitModeChange}
+            />
             <Button
               variant="ghost"
               size="icon"
@@ -92,7 +111,9 @@ export function ExamsListSection({
               title="刷新课程"
               aria-label="刷新课程"
             >
-              <RefreshCw className={`h-4 w-4 ${coursesLoading ? 'animate-spin' : ''}`} />
+              <RefreshCw
+                className={`h-4 w-4 ${coursesLoading ? 'animate-spin' : ''}`}
+              />
             </Button>
           </div>
         </CardHeader>
@@ -114,7 +135,9 @@ export function ExamsListSection({
                 <div className="flex items-start gap-2.5 rounded-xl border border-primary/20 bg-primary/5 p-3 text-xs text-foreground sm:p-4">
                   <FolderSync className="mt-0.5 h-4 w-4 text-primary shrink-0" />
                   <div className="flex-1">
-                    <p className="font-semibold text-primary">尚未读取考试明细</p>
+                    <p className="font-semibold text-primary">
+                      尚未读取考试明细
+                    </p>
                     <p className="text-muted-foreground mt-0.5">
                       展开下方课程卡片即可查看考试明细，或点击右上角刷新课程以同步最新数据。
                     </p>
@@ -126,7 +149,9 @@ export function ExamsListSection({
                 <div className="flex items-start gap-2.5 rounded-xl border border-border/80 bg-muted/25 p-3 text-xs text-muted-foreground sm:p-4">
                   <AlertCircle className="mt-0.5 h-4 w-4 text-muted-foreground shrink-0" />
                   <div className="flex-1">
-                    <p className="font-semibold text-foreground">当前暂无可执行考试</p>
+                    <p className="font-semibold text-foreground">
+                      当前暂无可执行考试
+                    </p>
                     <p className="mt-0.5 text-muted-foreground">
                       各课程已完成明细检查，暂无需要提交的考试。可点击右上角刷新重试。
                     </p>
@@ -140,12 +165,15 @@ export function ExamsListSection({
                 const allExams = details?.exams ?? [];
                 const exams = getVisibleExams(allExams, hideUnavailable);
                 const runnableExams = exams.filter((exam) => exam.runnable);
-                const courseSelected = selectedExams[course.key] ?? new Set<string>();
+                const courseSelected =
+                  selectedExams[course.key] ?? new Set<string>();
 
                 const isAllCourseExamsSelected =
-                  runnableExams.length > 0 && courseSelected.size === runnableExams.length;
+                  runnableExams.length > 0 &&
+                  courseSelected.size === runnableExams.length;
                 const isSomeCourseExamsSelected =
-                  courseSelected.size > 0 && courseSelected.size < runnableExams.length;
+                  courseSelected.size > 0 &&
+                  courseSelected.size < runnableExams.length;
 
                 return (
                   <div
@@ -155,7 +183,13 @@ export function ExamsListSection({
                     <div className="flex items-center justify-between gap-3 p-3 sm:p-4 bg-muted/20 transition-colors">
                       <div className="flex min-w-0 items-center gap-2.5 flex-1">
                         {details && runnableExams.length > 0 ? (
-                          <CourseCheckbox checked={isAllCourseExamsSelected} indeterminate={isSomeCourseExamsSelected} onChange={() => onToggleSelectCourseExams(course.key)} />
+                          <CourseCheckbox
+                            checked={isAllCourseExamsSelected}
+                            indeterminate={isSomeCourseExamsSelected}
+                            onChange={() =>
+                              onToggleSelectCourseExams(course.key)
+                            }
+                          />
                         ) : (
                           <div className="w-5 shrink-0" />
                         )}
@@ -179,16 +213,18 @@ export function ExamsListSection({
 
                       <div className="flex items-center gap-2 shrink-0">
                         {isLoading ? (
-                          <Badge variant="outline" className="text-xs text-muted-foreground gap-1">
+                          <Badge
+                            variant="outline"
+                            className="text-xs text-muted-foreground gap-1"
+                          >
                             <RefreshCw className="h-3 w-3 animate-spin" />
                             <span>加载中</span>
                           </Badge>
                         ) : null}
-
                       </div>
                     </div>
 
-                    {(
+                    {
                       <div className="border-t border-border/50 p-3 sm:p-4 bg-card animate-in fade-in-0 duration-240 ease-emphasized">
                         {isLoading ? (
                           <div className="flex items-center justify-center py-6 text-xs text-muted-foreground gap-2">
@@ -200,7 +236,10 @@ export function ExamsListSection({
                             <span>点击上方按钮加载考试明细</span>
                           </div>
                         ) : details.examsError ? (
-                          <div className="flex items-start gap-2 py-4 text-xs text-warning" role="alert">
+                          <div
+                            className="flex items-start gap-2 py-4 text-xs text-warning"
+                            role="alert"
+                          >
                             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                             <span>考试读取失败：{details.examsError}</span>
                           </div>
@@ -210,7 +249,10 @@ export function ExamsListSection({
                           </div>
                         ) : exams.length === 0 ? (
                           <div className="py-4 text-center text-xs text-muted-foreground">
-                            <span>该课程考试均不可执行或已截止 (共 {allExams.length} 项)</span>
+                            <span>
+                              该课程考试均不可执行或已截止 (共 {allExams.length}{' '}
+                              项)
+                            </span>
                           </div>
                         ) : (
                           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -218,13 +260,18 @@ export function ExamsListSection({
                               const title = getExamItemTitle(exam);
                               const isSelected = courseSelected.has(exam.id);
                               const isRunnable = exam.runnable;
-                              const urgencyLabel = getDeadlineUrgencyLabel(exam.endAt);
+                              const urgencyLabel = getDeadlineUrgencyLabel(
+                                exam.endAt,
+                              );
 
                               return (
                                 <button
                                   type="button"
                                   key={exam.id}
-                                  onClick={() => isRunnable && onToggleSelectExam(course.key, exam.id)}
+                                  onClick={() =>
+                                    isRunnable &&
+                                    onToggleSelectExam(course.key, exam.id)
+                                  }
                                   disabled={!isRunnable}
                                   aria-pressed={isSelected}
                                   className={`flex items-start gap-2.5 rounded-lg border p-3 text-xs transition-[color,background-color,border-color] duration-200 ease-standard ${
@@ -259,16 +306,23 @@ export function ExamsListSection({
                                             ? 'border-danger/30 bg-danger-container text-danger'
                                             : isRunnable
                                               ? 'border-warning/30 bg-warning-container text-warning'
-                                            : 'border-border bg-muted text-muted-foreground'
+                                              : 'border-border bg-muted text-muted-foreground'
                                         }`}
                                       >
-                                        {urgencyLabel ?? (isRunnable ? '未完成' : '不可执行')}
+                                        {urgencyLabel ??
+                                          (isRunnable ? '未完成' : '不可执行')}
                                       </Badge>
                                     </div>
 
                                     <div className="flex min-h-4 flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] leading-4 text-muted-foreground">
                                       {exam.endAt !== undefined && (
-                                        <span>截止时间：{formatLocalDateTime(exam.endAt, { includeYear: true, includeSeconds: false })}</span>
+                                        <span>
+                                          截止时间：
+                                          {formatLocalDateTime(exam.endAt, {
+                                            includeYear: true,
+                                            includeSeconds: false,
+                                          })}
+                                        </span>
                                       )}
                                     </div>
                                   </div>
@@ -278,7 +332,7 @@ export function ExamsListSection({
                           </div>
                         )}
                       </div>
-                    )}
+                    }
                   </div>
                 );
               })}

@@ -35,10 +35,19 @@ export const LogoutConfirmDialog: React.FC<LogoutConfirmDialogProps> = ({
         </DialogDescription>
       </DialogHeader>
       <DialogFooter className="gap-2 pt-2">
-        <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="h-9 px-4 text-xs font-medium">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => onOpenChange(false)}
+          className="h-9 px-4 text-xs font-medium"
+        >
           取消
         </Button>
-        <Button type="button" onClick={onConfirm} className="h-9 px-4 text-xs font-semibold">
+        <Button
+          type="button"
+          onClick={onConfirm}
+          className="h-9 px-4 text-xs font-semibold"
+        >
           退出账号
         </Button>
       </DialogFooter>

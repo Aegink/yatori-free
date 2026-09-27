@@ -17,7 +17,8 @@ export function CourseBulkSelectionMenu({
   const checkboxRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (checkboxRef.current) checkboxRef.current.indeterminate = allSelectionIndeterminate;
+    if (checkboxRef.current)
+      checkboxRef.current.indeterminate = allSelectionIndeterminate;
   }, [allSelectionIndeterminate]);
 
   return (

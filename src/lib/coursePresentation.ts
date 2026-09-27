@@ -1,6 +1,13 @@
-import type { CourseDocument, CourseSummary, CourseTaskPointKind } from '@/lib/api';
+import type {
+  CourseDocument,
+  CourseSummary,
+  CourseTaskPointKind,
+} from '@/lib/api';
 
-export const COURSE_TASK_POINT_KIND_LABELS: Record<CourseTaskPointKind, string> = {
+export const COURSE_TASK_POINT_KIND_LABELS: Record<
+  CourseTaskPointKind,
+  string
+> = {
   video: '视频',
   audio: '音频',
   chapter_test: '章节测验',
@@ -48,7 +55,10 @@ export function getCourseDocumentFileName(document: CourseDocument) {
   const extension = document.extension.trim().replace(/^\./, '');
   const name = document.name.trim();
 
-  if (!extension || name.toLowerCase().endsWith(`.${extension.toLowerCase()}`)) {
+  if (
+    !extension ||
+    name.toLowerCase().endsWith(`.${extension.toLowerCase()}`)
+  ) {
     return name;
   }
 

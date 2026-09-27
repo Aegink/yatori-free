@@ -8,7 +8,13 @@ interface CourseCheckboxProps {
   'aria-label'?: string;
 }
 
-export function CourseCheckbox({ checked, disabled = false, indeterminate, onChange, 'aria-label': ariaLabel }: CourseCheckboxProps) {
+export function CourseCheckbox({
+  checked,
+  disabled = false,
+  indeterminate,
+  onChange,
+  'aria-label': ariaLabel,
+}: CourseCheckboxProps) {
   const ref = useRef<HTMLInputElement>(null);
 
   useEffect(() => {

@@ -1,5 +1,12 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { Check, Eye, EyeOff, LoaderCircle, RotateCw, SendHorizontal } from 'lucide-react';
+import {
+  Check,
+  Eye,
+  EyeOff,
+  LoaderCircle,
+  RotateCw,
+  SendHorizontal,
+} from 'lucide-react';
 import { toast } from 'sonner';
 import {
   createSMSSession,
@@ -104,7 +111,10 @@ export function LoginCredentialsStep({
       toast.success('验证码已发送');
     } catch (error) {
       console.error(error);
-      const message = getUserFacingErrorMessage(error, '验证码发送失败，请稍后重试');
+      const message = getUserFacingErrorMessage(
+        error,
+        '验证码发送失败，请稍后重试',
+      );
       setSMSError(message);
       toast.error(message);
     } finally {
@@ -142,13 +152,17 @@ export function LoginCredentialsStep({
     setSMSError('');
 
     try {
-      const response = method === 'password'
-        ? await login({ account, password })
-        : await exchangeSMSSession(smsSession!.id, { code: smsCode.trim() });
+      const response =
+        method === 'password'
+          ? await login({ account, password })
+          : await exchangeSMSSession(smsSession!.id, { code: smsCode.trim() });
       onLoginSuccess(response.data);
     } catch (error) {
       console.error(error);
-      const message = getUserFacingErrorMessage(error, '服务暂时不可用，请稍后重试');
+      const message = getUserFacingErrorMessage(
+        error,
+        '服务暂时不可用，请稍后重试',
+      );
       if (method === 'password') {
         setPasswordError(message);
       } else {
@@ -163,15 +177,32 @@ export function LoginCredentialsStep({
   return (
     <div className="flex w-full flex-col items-center" inert={!active}>
       <h1 className="mb-1 text-2xl font-normal text-foreground">继续登录</h1>
-      <p className="mb-5 text-sm text-muted-foreground">使用 {account} 登录学习通</p>
+      <p className="mb-5 text-sm text-muted-foreground">
+        使用 {account} 登录学习通
+      </p>
 
-      <form onSubmit={handleSubmit} autoComplete="on" className="w-full space-y-5">
-        <input type="text" name="username" autoComplete="username" value={account} readOnly className="sr-only" />
+      <form
+        onSubmit={handleSubmit}
+        autoComplete="on"
+        className="w-full space-y-5"
+      >
+        <input
+          type="text"
+          name="username"
+          autoComplete="username"
+          value={account}
+          readOnly
+          className="sr-only"
+        />
 
         <Tabs value={method} onValueChange={handleMethodChange}>
           <TabsList className="h-11 w-full md:h-10">
-            <TabsTrigger value="password" disabled={isBusy}>密码登录</TabsTrigger>
-            <TabsTrigger value="sms" disabled={isBusy}>验证码登录</TabsTrigger>
+            <TabsTrigger value="password" disabled={isBusy}>
+              密码登录
+            </TabsTrigger>
+            <TabsTrigger value="sms" disabled={isBusy}>
+              验证码登录
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="password" className="mt-4 space-y-2">
@@ -208,10 +239,22 @@ export function LoginCredentialsStep({
                 disabled={isBusy}
                 aria-label={showPassword ? '隐藏密码' : '显示密码'}
               >
-                {showPassword ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
+                {showPassword ? (
+                  <EyeOff className="size-5" />
+                ) : (
+                  <Eye className="size-5" />
+                )}
               </button>
             </div>
-            {passwordError && <p id="password-error" role="alert" className="ml-1 text-xs text-danger">{passwordError}</p>}
+            {passwordError && (
+              <p
+                id="password-error"
+                role="alert"
+                className="ml-1 text-xs text-danger"
+              >
+                {passwordError}
+              </p>
+            )}
           </TabsContent>
 
           <TabsContent value="sms" className="mt-4 space-y-2">
@@ -225,7 +268,13 @@ export function LoginCredentialsStep({
                 inputMode="numeric"
                 placeholder="验证码"
                 aria-invalid={Boolean(smsError)}
-                aria-describedby={smsError ? 'sms-code-error' : smsSession ? 'sms-code-status' : undefined}
+                aria-describedby={
+                  smsError
+                    ? 'sms-code-error'
+                    : smsSession
+                      ? 'sms-code-status'
+                      : undefined
+                }
                 value={smsCode}
                 onChange={(event) => {
                   setSMSCode(event.target.value);
@@ -245,11 +294,22 @@ export function LoginCredentialsStep({
                 title={sendCodeButtonLabel}
               >
                 {isSendingCode ? (
-                  <LoaderCircle className="size-5 animate-spin motion-reduce:animate-none" aria-hidden="true" />
+                  <LoaderCircle
+                    className="size-5 animate-spin motion-reduce:animate-none"
+                    aria-hidden="true"
+                  />
                 ) : showSendSuccess ? (
-                  <Check className="size-5 animate-in zoom-in-90 duration-260 ease-emphasized motion-reduce:animate-none" aria-hidden="true" />
+                  <Check
+                    className="size-5 animate-in zoom-in-90 duration-260 ease-emphasized motion-reduce:animate-none"
+                    aria-hidden="true"
+                  />
                 ) : retrySeconds > 0 ? (
-                  <span className="text-xs font-semibold tabular-nums" aria-hidden="true">{retrySeconds}</span>
+                  <span
+                    className="text-xs font-semibold tabular-nums"
+                    aria-hidden="true"
+                  >
+                    {retrySeconds}
+                  </span>
                 ) : smsSession ? (
                   <RotateCw className="size-5" aria-hidden="true" />
                 ) : (
@@ -258,9 +318,21 @@ export function LoginCredentialsStep({
               </Button>
             </div>
             {smsError ? (
-              <p id="sms-code-error" role="alert" className="ml-1 text-xs text-danger">{smsError}</p>
+              <p
+                id="sms-code-error"
+                role="alert"
+                className="ml-1 text-xs text-danger"
+              >
+                {smsError}
+              </p>
             ) : smsSession ? (
-              <p id="sms-code-status" aria-live="polite" className="ml-1 text-xs text-success">验证码已发送</p>
+              <p
+                id="sms-code-status"
+                aria-live="polite"
+                className="ml-1 text-xs text-success"
+              >
+                验证码已发送
+              </p>
             ) : null}
           </TabsContent>
         </Tabs>
@@ -275,20 +347,47 @@ export function LoginCredentialsStep({
             className="mt-0.5 size-4 shrink-0 cursor-pointer rounded border-input accent-primary disabled:opacity-50"
           />
           <div className="min-w-0">
-            <label htmlFor="agree-terms" className={isBusy ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}>
+            <label
+              htmlFor="agree-terms"
+              className={
+                isBusy ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+              }
+            >
               我已阅读并同意
             </label>{' '}
-            <button type="button" onClick={() => onOpenLegalDocument('terms')} className="font-medium text-primary hover:underline">服务条款</button>{' '}
+            <button
+              type="button"
+              onClick={() => onOpenLegalDocument('terms')}
+              className="font-medium text-primary hover:underline"
+            >
+              服务条款
+            </button>{' '}
             <span aria-hidden="true">和</span>{' '}
-            <button type="button" onClick={() => onOpenLegalDocument('privacy')} className="font-medium text-primary hover:underline">隐私政策</button>
+            <button
+              type="button"
+              onClick={() => onOpenLegalDocument('privacy')}
+              className="font-medium text-primary hover:underline"
+            >
+              隐私政策
+            </button>
           </div>
         </div>
 
         <div className="flex items-center justify-between pt-1">
-          <Button type="button" variant="ghost" onClick={onBack} className="h-11 rounded-lg px-4 text-primary hover:bg-primary-container/30 md:h-10" disabled={isBusy}>
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={onBack}
+            className="h-11 rounded-lg px-4 text-primary hover:bg-primary-container/30 md:h-10"
+            disabled={isBusy}
+          >
             返回
           </Button>
-          <Button type="submit" disabled={isBusy || !agreedToTerms} className="h-11 min-w-24 rounded-lg bg-primary px-6 text-primary-foreground hover:bg-primary-hover md:h-10">
+          <Button
+            type="submit"
+            disabled={isBusy || !agreedToTerms}
+            className="h-11 min-w-24 rounded-lg bg-primary px-6 text-primary-foreground hover:bg-primary-hover md:h-10"
+          >
             {isLoggingIn ? '正在登录...' : '登录'}
           </Button>
         </div>

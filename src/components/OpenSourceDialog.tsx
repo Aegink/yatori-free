@@ -1,6 +1,6 @@
-import { ExternalLink, LibraryBig } from 'lucide-react';
+import { ExternalLink, LibraryBig } from "lucide-react";
 
-import { Button } from './ui/button';
+import { Button } from "./ui/button";
 import {
   Dialog,
   DialogContent,
@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from './ui/dialog';
+} from "./ui/dialog";
 
 interface OpenSourceProject {
   name: string;
@@ -19,29 +19,29 @@ interface OpenSourceProject {
 
 const OPEN_SOURCE_PROJECTS: OpenSourceProject[] = [
   {
-    name: 'yatori-go-core',
-    description: '学习通任务处理核心',
-    license: 'MIT',
-    url: 'https://github.com/yatori-dev/yatori-go-core',
+    name: "yatori-go-core",
+    description: "学习通任务处理核心",
+    license: "MIT",
+    url: "https://github.com/yatori-dev/yatori-go-core",
   },
   {
-    name: 'chaoxing_tool',
-    description: '学习通课程文档资源下载、学习次数/时长处理核心',
-    license: 'GPL-3.0',
-    url: 'https://github.com/liuyunfz/chaoxing_tool',
+    name: "chaoxing_tool",
+    description: "学习通课程文档资源下载、学习次数/时长处理核心",
+    license: "GPL-3.0",
+    url: "https://github.com/liuyunfz/chaoxing_tool",
   },
   {
-    name: 'PassChaoxing',
-    description: '学习通签到协议参考',
-    license: 'MIT',
-    url: 'https://github.com/qintaiyang/PassChaoxing',
+    name: "PassChaoxing",
+    description: "学习通签到协议参考",
+    license: "MIT",
+    url: "https://github.com/qintaiyang/PassChaoxing",
   },
   {
-    name: 'CxKitty',
-    description: '学习通扫码登录协议参考',
-    license: 'GPL-3.0',
-    url: 'https://github.com/MMitsuha/CxKitty',
-  }
+    name: "CxKitty",
+    description: "学习通扫码登录协议参考",
+    license: "GPL-3.0",
+    url: "https://github.com/MMitsuha/CxKitty",
+  },
 ];
 
 export function OpenSourceDialog() {
@@ -55,7 +55,7 @@ export function OpenSourceDialog() {
           aria-label="查看开源项目"
           title="开源项目"
         >
-        <LibraryBig className="h-4 w-4 sm:h-5 sm:w-5" />
+          <LibraryBig className="h-4 w-4 sm:h-5 sm:w-5" />
         </Button>
       </DialogTrigger>
       <DialogContent className="max-h-[calc(100dvh-1rem)] max-w-[calc(100%-1rem)] gap-0 overflow-hidden p-0 sm:max-h-[calc(100dvh-2rem)] sm:max-w-2xl">
@@ -64,7 +64,9 @@ export function OpenSourceDialog() {
             <LibraryBig className="h-4 w-4 text-primary sm:h-5 sm:w-5" />
             鸣谢
           </DialogTitle>
-          <DialogDescription>本服务参考或使用了以下开源项目。在此向各位开源社区作者表示最诚挚的感谢！</DialogDescription>
+          <DialogDescription>
+            本服务参考或使用了以下开源项目。在此向各位开源社区作者表示最诚挚的感谢！
+          </DialogDescription>
         </DialogHeader>
         <div className="grid max-h-[min(560px,calc(100dvh-8rem))] gap-1.5 overflow-y-auto p-2.5 sm:gap-2 sm:p-5">
           {OPEN_SOURCE_PROJECTS.map((project) => (
@@ -85,7 +87,9 @@ export function OpenSourceDialog() {
                   <span className="truncate">{project.name}</span>
                   <ExternalLink className="h-3.5 w-3.5 shrink-0 text-muted-foreground transition-colors group-hover:text-primary" />
                 </span>
-                <span className="mt-0.5 block truncate text-xs text-muted-foreground">{project.description}</span>
+                <span className="mt-0.5 block truncate text-xs text-muted-foreground">
+                  {project.description}
+                </span>
               </span>
               <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
                 {project.license}

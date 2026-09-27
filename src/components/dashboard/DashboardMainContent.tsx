@@ -2,7 +2,12 @@ import { useMemo, type RefObject } from 'react';
 import { Activity } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TabsContent } from '@/components/ui/tabs';
-import type { CourseDetails, CourseSummary, StudyIncrement, Task } from '@/lib/api';
+import type {
+  CourseDetails,
+  CourseSummary,
+  StudyIncrement,
+  Task,
+} from '@/lib/api';
 import type { TaskProgressSnapshot } from '@/hooks/useTaskProgressPolling';
 import type { CourseTaskPointProgressMap } from '@/lib/taskProgress';
 import { getDeadlineUrgencyLabel } from '@/lib/format';
@@ -13,7 +18,10 @@ import { CourseProgressSummary } from './CourseProgressSummary';
 import { WorksListSection } from './WorksListSection';
 import { ExamsListSection } from './ExamsListSection';
 import { StudyGoalsPage } from './StudyGoalsPage';
-import { mobileLearningTabs, type MobileDashboardTabId } from './dashboardNavigationData';
+import {
+  mobileLearningTabs,
+  type MobileDashboardTabId,
+} from './dashboardNavigationData';
 
 interface DashboardMainContentProps {
   mainRef: RefObject<HTMLElement | null>;
@@ -65,7 +73,10 @@ interface DashboardMainContentProps {
   onToggleFullCourseOutline: (courseKey: string) => void;
   onTaskFilterChange: (filter: 'active' | 'completed') => void;
   onRefreshTasks: () => void;
-  onSettingSwitch: (key: 'bypassDailyStudyLimit' | 'doChapterTest', checked: boolean) => void;
+  onSettingSwitch: (
+    key: 'bypassDailyStudyLimit' | 'doChapterTest',
+    checked: boolean,
+  ) => void;
   onWorkAutoSubmitChange: (value: 0 | 1 | 2) => void;
   onExamAutoSubmitChange: (value: 0 | 1 | 2) => void;
   onTabChange: (tab: MobileDashboardTabId) => void;
@@ -134,21 +145,30 @@ export function DashboardMainContent({
   onToggleSelectExam,
   onToggleSelectCourseExams,
 }: DashboardMainContentProps) {
-  const isLearningTab = activeTab === 'courses' || activeTab === 'works' || activeTab === 'exams';
+  const isLearningTab =
+    activeTab === 'courses' || activeTab === 'works' || activeTab === 'exams';
   const urgentCounts = useMemo(() => {
     let works = 0;
     let exams = 0;
 
     Object.values(courseDetailsMap).forEach((details) => {
-      works += (details.works ?? []).filter((work) => work.runnable && getDeadlineUrgencyLabel(work.endAt)).length;
-      exams += (details.exams ?? []).filter((exam) => exam.runnable && getDeadlineUrgencyLabel(exam.endAt)).length;
+      works += (details.works ?? []).filter(
+        (work) => work.runnable && getDeadlineUrgencyLabel(work.endAt),
+      ).length;
+      exams += (details.exams ?? []).filter(
+        (exam) => exam.runnable && getDeadlineUrgencyLabel(exam.endAt),
+      ).length;
     });
 
     return { works, exams };
   }, [courseDetailsMap]);
 
   return (
-    <main ref={mainRef} id="dashboard-main" className="min-h-0 flex-1 overflow-x-clip overflow-y-auto pb-[calc(8.5rem+env(safe-area-inset-bottom))] lg:pb-0">
+    <main
+      ref={mainRef}
+      id="dashboard-main"
+      className="min-h-0 flex-1 overflow-x-clip overflow-y-auto pb-[calc(8.5rem+env(safe-area-inset-bottom))] lg:pb-0"
+    >
       <div className="mx-auto w-full min-w-0 px-0 py-0 sm:px-4 sm:py-4 md:px-6 md:py-6 lg:px-8 lg:py-6">
         <div className="min-w-0">
           {/* Mobile Top Segmented Control for Learning sub-tabs */}
@@ -158,7 +178,12 @@ export function DashboardMainContent({
                 {mobileLearningTabs.map((tab) => {
                   const active = activeTab === tab.id;
                   const Icon = tab.icon;
-                  const urgentCount = tab.id === 'works' ? urgentCounts.works : tab.id === 'exams' ? urgentCounts.exams : 0;
+                  const urgentCount =
+                    tab.id === 'works'
+                      ? urgentCounts.works
+                      : tab.id === 'exams'
+                        ? urgentCounts.exams
+                        : 0;
                   return (
                     <button
                       key={tab.id}
@@ -189,114 +214,119 @@ export function DashboardMainContent({
           )}
 
           <div data-dashboard-tab-content>
-          {activeTab === 'courses' && (
-            <CourseProgressSummary
-              visibleCount={courses.length}
-              incompleteCount={incompleteSelectableCourses.length}
-              activeTaskCount={taskCounts.active}
-            />
-          )}
+            {activeTab === 'courses' && (
+              <CourseProgressSummary
+                visibleCount={courses.length}
+                incompleteCount={incompleteSelectableCourses.length}
+                activeTaskCount={taskCounts.active}
+              />
+            )}
 
-          <CourseListSection
-            accountId={accountId}
-            courses={courses}
-            filteredCourses={filteredCourses}
-            coursesLoading={coursesLoading}
-            coursesError={coursesError}
-            courseSearch={courseSearch}
-            courseSearchQuery={courseSearchQuery}
-            selectableCourses={selectableCourses}
-            incompleteSelectableCourses={incompleteSelectableCourses}
-            isAllSelected={isAllSelected}
-            isSomeSelected={isSomeSelected}
-            isAllIncompleteSelected={isAllIncompleteSelected}
-            selectedCourses={selectedCourses}
-            expandedCourses={expandedCourses}
-            fullyExpandedCourseOutlines={fullyExpandedCourseOutlines}
-            courseDetailsMap={courseDetailsMap}
-            loadingDetails={loadingDetails}
-            stoppingTaskId={stoppingTaskId}
-            onRefresh={onRefreshCourses}
-            onSearchChange={onSearchChange}
-            onSearchQueryChange={onSearchQueryChange}
-            onToggleSelectAll={onToggleSelectAll}
-            onToggleSelectIncomplete={onToggleSelectIncomplete}
-            onToggleCourseSelection={onToggleCourseSelection}
-            onStopTask={onStopTask}
-            onToggleExpandCourse={onToggleExpandCourse}
-            onToggleFullCourseOutline={onToggleFullCourseOutline}
-          />
-
-          <WorksListSection
-            hideUnavailable
-            courses={courses}
-            coursesLoading={coursesLoading}
-            courseDetailsMap={courseDetailsMap}
-            loadingDetails={loadingDetails}
-            selectedWorks={selectedWorks}
-            submitMode={workAutoSubmit}
-            onSubmitModeChange={onWorkAutoSubmitChange}
-            onToggleSelectWork={onToggleSelectWork}
-            onToggleSelectCourseWorks={onToggleSelectCourseWorks}
-            onRefreshCourses={onRefreshCourses}
-          />
-
-          <ExamsListSection
-            hideUnavailable
-            courses={courses}
-            coursesLoading={coursesLoading}
-            courseDetailsMap={courseDetailsMap}
-            loadingDetails={loadingDetails}
-            selectedExams={selectedExams}
-            submitMode={examAutoSubmit}
-            onSubmitModeChange={onExamAutoSubmitChange}
-            onToggleSelectExam={onToggleSelectExam}
-            onToggleSelectCourseExams={onToggleSelectCourseExams}
-            onRefreshCourses={onRefreshCourses}
-          />
-
-          <TabsContent value="settings" className="m-0 outline-none">
-            <TaskSettingsPanel
-              bypassDailyStudyLimit={bypassDailyStudyLimit}
-              doChapterTest={doChapterTest}
-              onUnauthorized={onUnauthorized}
-              onSettingSwitch={onSettingSwitch}
-            />
-          </TabsContent>
-
-          <TabsContent value="study" className="m-0 outline-none">
-            <StudyGoalsPage
+            <CourseListSection
+              accountId={accountId}
               courses={courses}
-              studyIncrements={studyIncrements}
-              defaultStudyIncrement={defaultStudyIncrement}
-              onOpenStudyIncrementSettings={onOpenStudyIncrementSettings}
+              filteredCourses={filteredCourses}
+              coursesLoading={coursesLoading}
+              coursesError={coursesError}
+              courseSearch={courseSearch}
+              courseSearchQuery={courseSearchQuery}
+              selectableCourses={selectableCourses}
+              incompleteSelectableCourses={incompleteSelectableCourses}
+              isAllSelected={isAllSelected}
+              isSomeSelected={isSomeSelected}
+              isAllIncompleteSelected={isAllIncompleteSelected}
+              selectedCourses={selectedCourses}
+              expandedCourses={expandedCourses}
+              fullyExpandedCourseOutlines={fullyExpandedCourseOutlines}
+              courseDetailsMap={courseDetailsMap}
+              loadingDetails={loadingDetails}
+              stoppingTaskId={stoppingTaskId}
+              onRefresh={onRefreshCourses}
+              onSearchChange={onSearchChange}
+              onSearchQueryChange={onSearchQueryChange}
+              onToggleSelectAll={onToggleSelectAll}
+              onToggleSelectIncomplete={onToggleSelectIncomplete}
+              onToggleCourseSelection={onToggleCourseSelection}
+              onStopTask={onStopTask}
+              onToggleExpandCourse={onToggleExpandCourse}
+              onToggleFullCourseOutline={onToggleFullCourseOutline}
             />
-          </TabsContent>
 
-          <TabsContent value="tasks" className="m-0 min-h-full outline-none">
-            <Card className="min-h-full min-w-0 overflow-hidden rounded-none border-none bg-card py-0 shadow-none ring-0 sm:rounded-xl sm:py-4 sm:shadow-sm sm:ring-0">
-              <CardHeader className="rounded-none border-b border-border/50 px-3 py-2.5 sm:px-6 sm:py-4">
-                <CardTitle className="flex items-center gap-2 text-sm font-semibold sm:text-base"><Activity className="h-4 w-4 text-primary" />任务</CardTitle>
-              </CardHeader>
-              <CardContent className="flex min-h-[28rem] min-w-0 flex-col p-0">
-                <TaskStatusContent
-                  tasks={tasks}
-                  filteredTasks={filteredTasks}
-                  taskCounts={taskCounts}
-                  taskFilter={taskFilter}
-                  tasksLoading={tasksLoading}
-                  taskSnapshots={taskSnapshots}
-                  courseNameByIdentifier={courseNameByIdentifier}
-                  courseTaskPointProgressByIdentifier={courseTaskPointProgressByIdentifier}
-                  onTaskFilterChange={onTaskFilterChange}
-                  onRefresh={onRefreshTasks}
-                  onStopTask={onStopTask}
-                />
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </div>
+            <WorksListSection
+              hideUnavailable
+              courses={courses}
+              coursesLoading={coursesLoading}
+              courseDetailsMap={courseDetailsMap}
+              loadingDetails={loadingDetails}
+              selectedWorks={selectedWorks}
+              submitMode={workAutoSubmit}
+              onSubmitModeChange={onWorkAutoSubmitChange}
+              onToggleSelectWork={onToggleSelectWork}
+              onToggleSelectCourseWorks={onToggleSelectCourseWorks}
+              onRefreshCourses={onRefreshCourses}
+            />
+
+            <ExamsListSection
+              hideUnavailable
+              courses={courses}
+              coursesLoading={coursesLoading}
+              courseDetailsMap={courseDetailsMap}
+              loadingDetails={loadingDetails}
+              selectedExams={selectedExams}
+              submitMode={examAutoSubmit}
+              onSubmitModeChange={onExamAutoSubmitChange}
+              onToggleSelectExam={onToggleSelectExam}
+              onToggleSelectCourseExams={onToggleSelectCourseExams}
+              onRefreshCourses={onRefreshCourses}
+            />
+
+            <TabsContent value="settings" className="m-0 outline-none">
+              <TaskSettingsPanel
+                bypassDailyStudyLimit={bypassDailyStudyLimit}
+                doChapterTest={doChapterTest}
+                onUnauthorized={onUnauthorized}
+                onSettingSwitch={onSettingSwitch}
+              />
+            </TabsContent>
+
+            <TabsContent value="study" className="m-0 outline-none">
+              <StudyGoalsPage
+                courses={courses}
+                studyIncrements={studyIncrements}
+                defaultStudyIncrement={defaultStudyIncrement}
+                onOpenStudyIncrementSettings={onOpenStudyIncrementSettings}
+              />
+            </TabsContent>
+
+            <TabsContent value="tasks" className="m-0 min-h-full outline-none">
+              <Card className="min-h-full min-w-0 overflow-hidden rounded-none border-none bg-card py-0 shadow-none ring-0 sm:rounded-xl sm:py-4 sm:shadow-sm sm:ring-0">
+                <CardHeader className="rounded-none border-b border-border/50 px-3 py-2.5 sm:px-6 sm:py-4">
+                  <CardTitle className="flex items-center gap-2 text-sm font-semibold sm:text-base">
+                    <Activity className="h-4 w-4 text-primary" />
+                    任务
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="flex min-h-[28rem] min-w-0 flex-col p-0">
+                  <TaskStatusContent
+                    tasks={tasks}
+                    filteredTasks={filteredTasks}
+                    taskCounts={taskCounts}
+                    taskFilter={taskFilter}
+                    tasksLoading={tasksLoading}
+                    taskSnapshots={taskSnapshots}
+                    courseNameByIdentifier={courseNameByIdentifier}
+                    courseTaskPointProgressByIdentifier={
+                      courseTaskPointProgressByIdentifier
+                    }
+                    onTaskFilterChange={onTaskFilterChange}
+                    onRefresh={onRefreshTasks}
+                    onStopTask={onStopTask}
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
           </div>
+        </div>
       </div>
     </main>
   );

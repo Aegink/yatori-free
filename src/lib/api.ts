@@ -1,4 +1,6 @@
-export const API_BASE_URL = import.meta.env.DEV ? '/api' : 'https://yatori-api.hungrym0.com';
+export const API_BASE_URL = import.meta.env.DEV
+  ? '/api'
+  : 'https://yatori-api.hungrym0.com';
 
 export interface ApiError extends Error {
   status?: number;
@@ -262,23 +264,40 @@ export interface CourseListResponseData {
 }
 
 interface CourseListApiResponseData {
-  courses: Array<{ course: Course; processing: boolean; processingTaskId: string }>;
+  courses: Array<{
+    course: Course;
+    processing: boolean;
+    processingTaskId: string;
+  }>;
   sourceStatus: CourseSourceStatus;
   errors: Record<string, unknown>[];
 }
 
-function isCourseListApiResponseData(value: unknown): value is CourseListApiResponseData {
-  if (!isRecord(value) || !Array.isArray(value.courses) || !isRecord(value.sourceStatus) || !Array.isArray(value.errors) || !value.errors.every(isRecord)) {
+function isCourseListApiResponseData(
+  value: unknown,
+): value is CourseListApiResponseData {
+  if (
+    !isRecord(value) ||
+    !Array.isArray(value.courses) ||
+    !isRecord(value.sourceStatus) ||
+    !Array.isArray(value.errors) ||
+    !value.errors.every(isRecord)
+  ) {
     return false;
   }
 
-  return value.sourceStatus.joined === 'ok'
-    || value.sourceStatus.joined === 'failed'
-    || value.sourceStatus.joined === 'skipped';
+  return (
+    value.sourceStatus.joined === 'ok' ||
+    value.sourceStatus.joined === 'failed' ||
+    value.sourceStatus.joined === 'skipped'
+  );
 }
 
 function getCourseListSourceError(errors: Record<string, unknown>[]) {
-  const detail = errors.find((error) => typeof error.message === 'string' || typeof error.error === 'string');
+  const detail = errors.find(
+    (error) =>
+      typeof error.message === 'string' || typeof error.error === 'string',
+  );
   const message = detail
     ? typeof detail.message === 'string'
       ? detail.message
@@ -286,7 +305,9 @@ function getCourseListSourceError(errors: Record<string, unknown>[]) {
         ? detail.error
         : null
     : null;
-  return message?.trim() ? `课程读取失败：${message.trim()}` : '课程源读取失败，请稍后重试';
+  return message?.trim()
+    ? `课程读取失败：${message.trim()}`
+    : '课程源读取失败，请稍后重试';
 }
 
 export interface CourseTaskListItem<T> {
@@ -318,17 +339,18 @@ interface CreateTaskBase {
   coursesCustom?: CoursesCustom;
 }
 
-export type CreateTaskRequest = CreateTaskBase & (
-  | {
-      kind: TaskKind;
-      targets: TaskTarget[];
-    }
-  | {
-      kind?: '';
-      coursesCustom: CoursesCustom;
-      targets?: TaskTarget[];
-    }
-);
+export type CreateTaskRequest = CreateTaskBase &
+  (
+    | {
+        kind: TaskKind;
+        targets: TaskTarget[];
+      }
+    | {
+        kind?: '';
+        coursesCustom: CoursesCustom;
+        targets?: TaskTarget[];
+      }
+  );
 
 export interface EmailNotificationSettings {
   available: boolean;
@@ -381,7 +403,12 @@ export interface SMSSessionData {
   retryAfterSeconds: number;
 }
 
-export type QRSessionStatus = 'pending' | 'scanned' | 'confirmed' | 'expired' | 'failed';
+export type QRSessionStatus =
+  | 'pending'
+  | 'scanned'
+  | 'confirmed'
+  | 'expired'
+  | 'failed';
 
 export interface QRSessionData {
   id: string;
@@ -423,14 +450,21 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function isOptionalTaskKind(value: unknown): value is TaskKind | undefined {
-  return value === undefined || value === 'task_points' || value === 'works' || value === 'exams';
+  return (
+    value === undefined ||
+    value === 'task_points' ||
+    value === 'works' ||
+    value === 'exams'
+  );
 }
 
 function isTaskTarget(value: unknown): value is TaskTarget {
-  return isRecord(value)
-    && typeof value.classId === 'string'
-    && Array.isArray(value.itemIds)
-    && value.itemIds.every((id) => typeof id === 'string');
+  return (
+    isRecord(value) &&
+    typeof value.classId === 'string' &&
+    Array.isArray(value.itemIds) &&
+    value.itemIds.every((id) => typeof id === 'string')
+  );
 }
 
 function isTaskConfigSnapshot(value: unknown): value is TaskConfigSnapshot {
@@ -445,13 +479,18 @@ export function getTaskConfigSnapshot(configSnapshot: Task['configSnapshot']) {
   // Preserve usable server fields when an older response adds an incompatible
   // optional field; a single mismatch must not hide the course scope.
   const snapshot: TaskConfigSnapshot = {};
-  if (typeof configSnapshot.account === 'string') snapshot.account = configSnapshot.account;
-  if (typeof configSnapshot.accountType === 'string') snapshot.accountType = configSnapshot.accountType;
-  if (typeof configSnapshot.bypassDailyStudyLimit === 'boolean') snapshot.bypassDailyStudyLimit = configSnapshot.bypassDailyStudyLimit;
-  if (isOptionalTaskKind(configSnapshot.kind)) snapshot.kind = configSnapshot.kind;
+  if (typeof configSnapshot.account === 'string')
+    snapshot.account = configSnapshot.account;
+  if (typeof configSnapshot.accountType === 'string')
+    snapshot.accountType = configSnapshot.accountType;
+  if (typeof configSnapshot.bypassDailyStudyLimit === 'boolean')
+    snapshot.bypassDailyStudyLimit = configSnapshot.bypassDailyStudyLimit;
+  if (isOptionalTaskKind(configSnapshot.kind))
+    snapshot.kind = configSnapshot.kind;
   if (Array.isArray(configSnapshot.targets)) {
     const targets = configSnapshot.targets.filter(isTaskTarget);
-    if (targets.length > 0 || configSnapshot.targets.length === 0) snapshot.targets = targets;
+    if (targets.length > 0 || configSnapshot.targets.length === 0)
+      snapshot.targets = targets;
   }
   if (isRecord(configSnapshot.coursesCustom)) {
     snapshot.coursesCustom = configSnapshot.coursesCustom as CoursesCustom;
@@ -459,11 +498,15 @@ export function getTaskConfigSnapshot(configSnapshot: Task['configSnapshot']) {
   return snapshot;
 }
 
-export function getTaskCoursesCustomSnapshot(configSnapshot: Task['configSnapshot']) {
+export function getTaskCoursesCustomSnapshot(
+  configSnapshot: Task['configSnapshot'],
+) {
   return getTaskConfigSnapshot(configSnapshot)?.coursesCustom;
 }
 
-export function getTaskCourseIdentifiers(configSnapshot: Task['configSnapshot']) {
+export function getTaskCourseIdentifiers(
+  configSnapshot: Task['configSnapshot'],
+) {
   const config = getTaskConfigSnapshot(configSnapshot);
   const includedCourses = config?.coursesCustom?.includeCourses;
   if (includedCourses && includedCourses.length > 0) {
@@ -481,7 +524,13 @@ export function getExamItemTitle(item: CourseExamItem) {
   return (item.name || `考试 #${item.id}`).trim();
 }
 
-export type StudyMetricStatus = 'disabled' | 'pending' | 'running' | 'success' | 'failed' | 'skipped';
+export type StudyMetricStatus =
+  | 'disabled'
+  | 'pending'
+  | 'running'
+  | 'success'
+  | 'failed'
+  | 'skipped';
 
 export interface StudyMetricProgress {
   baseline: number;
@@ -537,7 +586,10 @@ function getApiErrorPayloadMessage(error: unknown) {
   return getApiResponseMessage(error.payload);
 }
 
-export function getUserFacingErrorMessage(error: unknown, fallback = '请求失败') {
+export function getUserFacingErrorMessage(
+  error: unknown,
+  fallback = '请求失败',
+) {
   if (isUnauthorizedError(error)) {
     return '登录信息已过期，请重新登录';
   }
@@ -587,11 +639,11 @@ export function isAuthExitError(error: unknown) {
 
 function isApiResponse(payload: unknown): payload is ApiResponse {
   return (
-    typeof payload === 'object'
-    && payload !== null
-    && 'code' in payload
-    && typeof payload.code === 'number'
-    && Number.isFinite(payload.code)
+    typeof payload === 'object' &&
+    payload !== null &&
+    'code' in payload &&
+    typeof payload.code === 'number' &&
+    Number.isFinite(payload.code)
   );
 }
 
@@ -601,7 +653,11 @@ function getApiResponseMessage(payload: ApiResponse) {
     : null;
 }
 
-function createApiError(message: string, status: number, payload?: unknown): ApiError {
+function createApiError(
+  message: string,
+  status: number,
+  payload?: unknown,
+): ApiError {
   const error: ApiError = new Error(message);
   error.status = status;
   error.payload = payload;
@@ -610,11 +666,26 @@ function createApiError(message: string, status: number, payload?: unknown): Api
 
 const DEFAULT_REQUEST_TIMEOUT_MS = 15_000;
 
-export function apiRequest(path: string, options?: ApiRequestOptions): Promise<ApiResponse>;
-export function apiRequest<T>(path: string, options: ApiRequestOptions | undefined, requireData: true): Promise<ApiDataResponse<T>>;
-export async function apiRequest<T>(path: string, options: ApiRequestOptions = {}, requireData = false) {
+export function apiRequest(
+  path: string,
+  options?: ApiRequestOptions,
+): Promise<ApiResponse>;
+export function apiRequest<T>(
+  path: string,
+  options: ApiRequestOptions | undefined,
+  requireData: true,
+): Promise<ApiDataResponse<T>>;
+export async function apiRequest<T>(
+  path: string,
+  options: ApiRequestOptions = {},
+  requireData = false,
+) {
   const headers: Record<string, string> = {};
-  const { timeoutMs = DEFAULT_REQUEST_TIMEOUT_MS, signal: callerSignal, ...requestInit } = options;
+  const {
+    timeoutMs = DEFAULT_REQUEST_TIMEOUT_MS,
+    signal: callerSignal,
+    ...requestInit
+  } = options;
   const controller = new AbortController();
   let timedOut = false;
   let callerAborted = callerSignal?.aborted === true;
@@ -653,20 +724,35 @@ export async function apiRequest<T>(path: string, options: ApiRequestOptions = {
       try {
         payload = JSON.parse(rawBody);
       } catch {
-        throw createApiError(`接口响应不是 JSON (${response.status})`, response.status);
+        throw createApiError(
+          `接口响应不是 JSON (${response.status})`,
+          response.status,
+        );
       }
     }
 
     if (!isApiResponse(payload)) {
-      throw createApiError(`接口响应不符合约定 (${response.status})`, response.status, payload);
+      throw createApiError(
+        `接口响应不符合约定 (${response.status})`,
+        response.status,
+        payload,
+      );
     }
 
     if (!response.ok || ![200, 201].includes(payload.code)) {
-      throw createApiError(getApiResponseMessage(payload) || `请求失败 (${response.status})`, response.status, payload);
+      throw createApiError(
+        getApiResponseMessage(payload) || `请求失败 (${response.status})`,
+        response.status,
+        payload,
+      );
     }
 
     if (requireData && !('data' in payload)) {
-      throw createApiError(`接口响应缺少 data (${response.status})`, response.status, payload);
+      throw createApiError(
+        `接口响应缺少 data (${response.status})`,
+        response.status,
+        payload,
+      );
     }
 
     return payload as ApiResponse | ApiDataResponse<T>;
@@ -676,7 +762,11 @@ export async function apiRequest<T>(path: string, options: ApiRequestOptions = {
         timedOut ? `请求超时 (${timeoutMs}ms)` : '请求已取消',
         0,
       );
-      aborted.kind = timedOut ? 'timeout' : callerAborted ? 'aborted' : 'aborted';
+      aborted.kind = timedOut
+        ? 'timeout'
+        : callerAborted
+          ? 'aborted'
+          : 'aborted';
       throw aborted;
     }
     throw error;
@@ -687,7 +777,11 @@ export async function apiRequest<T>(path: string, options: ApiRequestOptions = {
 }
 
 export async function getCurrentSession() {
-  const response = await apiRequest<CurrentSessionData>('/auth/me', undefined, true);
+  const response = await apiRequest<CurrentSessionData>(
+    '/auth/me',
+    undefined,
+    true,
+  );
   const data = response.data;
 
   const account = data.account;
@@ -753,21 +847,36 @@ export interface SignLogsResponseData {
 }
 
 export function login(payload: LoginRequest) {
-  return apiRequest<LoginData>('/auth/login', {
-    method: 'POST',
-    body: JSON.stringify(payload),
-  }, true);
+  return apiRequest<LoginData>(
+    '/auth/login',
+    {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    },
+    true,
+  );
 }
 
-export function createSMSSession(payload: CreateSMSSessionRequest, options?: ApiRequestOptions) {
-  return apiRequest<SMSSessionData>('/auth/sms-sessions', {
-    ...options,
-    method: 'POST',
-    body: JSON.stringify(payload),
-  }, true);
+export function createSMSSession(
+  payload: CreateSMSSessionRequest,
+  options?: ApiRequestOptions,
+) {
+  return apiRequest<SMSSessionData>(
+    '/auth/sms-sessions',
+    {
+      ...options,
+      method: 'POST',
+      body: JSON.stringify(payload),
+    },
+    true,
+  );
 }
 
-export function exchangeSMSSession(sessionId: string, payload: ExchangeSMSSessionRequest, options?: ApiRequestOptions) {
+export function exchangeSMSSession(
+  sessionId: string,
+  payload: ExchangeSMSSessionRequest,
+  options?: ApiRequestOptions,
+) {
   return apiRequest<LoginData>(
     `/auth/sms-sessions/${encodeApiPathSegment(sessionId)}/session`,
     {
@@ -780,10 +889,14 @@ export function exchangeSMSSession(sessionId: string, payload: ExchangeSMSSessio
 }
 
 export function createQRSession(options?: ApiRequestOptions) {
-  return apiRequest<QRSessionData>('/auth/qr-sessions', {
-    ...options,
-    method: 'POST',
-  }, true);
+  return apiRequest<QRSessionData>(
+    '/auth/qr-sessions',
+    {
+      ...options,
+      method: 'POST',
+    },
+    true,
+  );
 }
 
 export function getQRSession(sessionId: string, options?: ApiRequestOptions) {
@@ -794,7 +907,10 @@ export function getQRSession(sessionId: string, options?: ApiRequestOptions) {
   );
 }
 
-export function exchangeQRSession(sessionId: string, options?: ApiRequestOptions) {
+export function exchangeQRSession(
+  sessionId: string,
+  options?: ApiRequestOptions,
+) {
   return apiRequest<LoginData>(
     `/auth/qr-sessions/${encodeApiPathSegment(sessionId)}/session`,
     { ...options, method: 'POST' },
@@ -813,38 +929,58 @@ export function getVersion() {
 }
 
 export function getCourses(accountId: string, options?: ApiRequestOptions) {
-  return apiRequest<CourseListApiResponseData>(`/accounts/${encodeApiPathSegment(accountId)}/courses`, options, true)
-    .then((response) => {
-      if (!isCourseListApiResponseData(response.data)) {
+  return apiRequest<CourseListApiResponseData>(
+    `/accounts/${encodeApiPathSegment(accountId)}/courses`,
+    options,
+    true,
+  ).then((response) => {
+    if (!isCourseListApiResponseData(response.data)) {
+      throw new Error('课程接口响应结构异常，请稍后重试');
+    }
+    if (response.data.sourceStatus.joined !== 'ok') {
+      throw new Error(getCourseListSourceError(response.data.errors));
+    }
+
+    const validCourses = response.data.courses.map((item) => {
+      if (
+        !isRecord(item) ||
+        !isRecord(item.course) ||
+        typeof item.course.key !== 'string' ||
+        typeof item.course.courseName !== 'string' ||
+        typeof item.processing !== 'boolean' ||
+        typeof item.processingTaskId !== 'string'
+      ) {
         throw new Error('课程接口响应结构异常，请稍后重试');
       }
-      if (response.data.sourceStatus.joined !== 'ok') {
-        throw new Error(getCourseListSourceError(response.data.errors));
-      }
+      return item as {
+        course: Course;
+        processing: boolean;
+        processingTaskId: string;
+      };
+    });
 
-      const validCourses = response.data.courses.map((item) => {
-        if (!isRecord(item) || !isRecord(item.course) || typeof item.course.key !== 'string' || typeof item.course.courseName !== 'string' || typeof item.processing !== 'boolean' || typeof item.processingTaskId !== 'string') {
-          throw new Error('课程接口响应结构异常，请稍后重试');
-        }
-        return item as { course: Course; processing: boolean; processingTaskId: string };
-      });
-
-      return {
-        ...response,
-        data: {
-          courses: validCourses.map(({ course, processing, processingTaskId }) => ({
+    return {
+      ...response,
+      data: {
+        courses: validCourses.map(
+          ({ course, processing, processingTaskId }) => ({
             ...course,
             processing,
             processingTaskId,
-          })),
-          sourceStatus: response.data.sourceStatus,
-          errors: response.data.errors,
-        },
-      } satisfies ApiDataResponse<CourseListResponseData>;
-    });
+          }),
+        ),
+        sourceStatus: response.data.sourceStatus,
+        errors: response.data.errors,
+      },
+    } satisfies ApiDataResponse<CourseListResponseData>;
+  });
 }
 
-export function getCourseDetails(accountId: string, classId: string, options?: ApiRequestOptions) {
+export function getCourseDetails(
+  accountId: string,
+  classId: string,
+  options?: ApiRequestOptions,
+) {
   return apiRequest<CourseDetails>(
     `/accounts/${encodeApiPathSegment(accountId)}/courses/${encodeApiPathSegment(classId)}`,
     options,
@@ -852,7 +988,11 @@ export function getCourseDetails(accountId: string, classId: string, options?: A
   );
 }
 
-function getCourseTaskList<T>(accountId: string, kind: 'works' | 'exams', options?: ApiRequestOptions) {
+function getCourseTaskList<T>(
+  accountId: string,
+  kind: 'works' | 'exams',
+  options?: ApiRequestOptions,
+) {
   return apiRequest<CourseTaskListResponseData<T>>(
     `/accounts/${encodeApiPathSegment(accountId)}/${kind}`,
     options,
@@ -868,7 +1008,11 @@ export function getExams(accountId: string, options?: ApiRequestOptions) {
   return getCourseTaskList<CourseExamItem>(accountId, 'exams', options);
 }
 
-export function getCourseDocumentDownloadUrl(accountId: string, classId: string, documentId: string) {
+export function getCourseDocumentDownloadUrl(
+  accountId: string,
+  classId: string,
+  documentId: string,
+) {
   return `${API_BASE_URL}/accounts/${encodeApiPathSegment(accountId)}/courses/${encodeApiPathSegment(classId)}/documents/${encodeApiPathSegment(documentId)}/download`;
 }
 
@@ -877,14 +1021,22 @@ export function getTasks(options?: ApiRequestOptions) {
 }
 
 export function createTask(payload: CreateTaskRequest) {
-  return apiRequest<Task>('/tasks', {
-    method: 'POST',
-    body: JSON.stringify(payload),
-  }, true);
+  return apiRequest<Task>(
+    '/tasks',
+    {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    },
+    true,
+  );
 }
 
 export function getTask(taskId: string, options?: ApiRequestOptions) {
-  return apiRequest<Task>(`/tasks/${encodeApiPathSegment(taskId)}`, options, true);
+  return apiRequest<Task>(
+    `/tasks/${encodeApiPathSegment(taskId)}`,
+    options,
+    true,
+  );
 }
 
 export function stopTask(taskId: string) {
@@ -894,40 +1046,70 @@ export function stopTask(taskId: string) {
 }
 
 export function getEmailNotificationSettings() {
-  return apiRequest<EmailNotificationSettings>('/notifications/email', undefined, true);
+  return apiRequest<EmailNotificationSettings>(
+    '/notifications/email',
+    undefined,
+    true,
+  );
 }
 
-export function requestEmailVerification(payload: RequestEmailVerificationRequest) {
-  return apiRequest<EmailNotificationSettings>('/notifications/email/verification', {
-    method: 'POST',
-    body: JSON.stringify(payload),
-  }, true);
+export function requestEmailVerification(
+  payload: RequestEmailVerificationRequest,
+) {
+  return apiRequest<EmailNotificationSettings>(
+    '/notifications/email/verification',
+    {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    },
+    true,
+  );
 }
 
-export function confirmEmailVerification(payload: ConfirmEmailVerificationRequest) {
-  return apiRequest<EmailNotificationSettings>('/notifications/email/verification/confirm', {
-    method: 'POST',
-    body: JSON.stringify(payload),
-  }, true);
+export function confirmEmailVerification(
+  payload: ConfirmEmailVerificationRequest,
+) {
+  return apiRequest<EmailNotificationSettings>(
+    '/notifications/email/verification/confirm',
+    {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    },
+    true,
+  );
 }
 
-export function updateEmailNotification(payload: UpdateEmailNotificationRequest) {
-  return apiRequest<EmailNotificationSettings>('/notifications/email', {
-    method: 'PUT',
-    body: JSON.stringify(payload),
-  }, true);
+export function updateEmailNotification(
+  payload: UpdateEmailNotificationRequest,
+) {
+  return apiRequest<EmailNotificationSettings>(
+    '/notifications/email',
+    {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    },
+    true,
+  );
 }
 
 export function startSignMonitor(accountId: string) {
-  return apiRequest<SignMonitorStatus>(`/accounts/${encodeApiPathSegment(accountId)}/sign-monitor/start`, {
-    method: 'POST',
-  }, true);
+  return apiRequest<SignMonitorStatus>(
+    `/accounts/${encodeApiPathSegment(accountId)}/sign-monitor/start`,
+    {
+      method: 'POST',
+    },
+    true,
+  );
 }
 
 export function stopSignMonitor(accountId: string) {
-  return apiRequest<SignMonitorStatus>(`/accounts/${encodeApiPathSegment(accountId)}/sign-monitor/stop`, {
-    method: 'POST',
-  }, true);
+  return apiRequest<SignMonitorStatus>(
+    `/accounts/${encodeApiPathSegment(accountId)}/sign-monitor/stop`,
+    {
+      method: 'POST',
+    },
+    true,
+  );
 }
 
 export function getSignLogs(accountId: string) {

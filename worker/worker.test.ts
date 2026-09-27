@@ -19,9 +19,11 @@ describe("maintenance mode", () => {
     const response = new Response("ok")
     const fetch = vi.fn().mockResolvedValue(response)
 
-    await expect(worker.fetch(new Request("https://example.com"), {
-      ASSETS: { fetch },
-    })).resolves.toBe(response)
+    await expect(
+      worker.fetch(new Request("https://example.com"), {
+        ASSETS: { fetch },
+      }),
+    ).resolves.toBe(response)
     expect(fetch).toHaveBeenCalledOnce()
   })
 })

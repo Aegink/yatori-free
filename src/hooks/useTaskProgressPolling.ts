@@ -24,7 +24,10 @@ interface UseTaskProgressPollingOptions {
   onUnauthorized: () => void;
 }
 
-function canReplaceProgress(current: TaskProgress | null, next: TaskProgress | null) {
+function canReplaceProgress(
+  current: TaskProgress | null,
+  next: TaskProgress | null,
+) {
   if (!next || !current) {
     return true;
   }
@@ -32,11 +35,20 @@ function canReplaceProgress(current: TaskProgress | null, next: TaskProgress | n
   const currentTime = Date.parse(current.updatedAt ?? '');
   const nextTime = Date.parse(next.updatedAt ?? '');
 
-  return Number.isNaN(currentTime) || Number.isNaN(nextTime) || nextTime >= currentTime;
+  return (
+    Number.isNaN(currentTime) ||
+    Number.isNaN(nextTime) ||
+    nextTime >= currentTime
+  );
 }
 
-export function useTaskProgressPolling({ tasks, onUnauthorized }: UseTaskProgressPollingOptions) {
-  const [snapshots, setSnapshots] = useState<Record<string, TaskProgressSnapshot>>({});
+export function useTaskProgressPolling({
+  tasks,
+  onUnauthorized,
+}: UseTaskProgressPollingOptions) {
+  const [snapshots, setSnapshots] = useState<
+    Record<string, TaskProgressSnapshot>
+  >({});
   const latestRequestIdRef = useRef(new Map<string, number>());
   const inFlightRef = useRef(new Map<string, AbortController>());
   const terminalSnapshotIdsRef = useRef(new Set<string>());
@@ -46,7 +58,12 @@ export function useTaskProgressPolling({ tasks, onUnauthorized }: UseTaskProgres
     .map((task) => task.id)
     .join('|');
   const terminalTaskIds = tasks
-    .filter((task) => TASK_DETAIL_SNAPSHOT_STATUSES.includes(task.status as (typeof TASK_DETAIL_SNAPSHOT_STATUSES)[number]) && isTerminalTaskStatus(task.status))
+    .filter(
+      (task) =>
+        TASK_DETAIL_SNAPSHOT_STATUSES.includes(
+          task.status as (typeof TASK_DETAIL_SNAPSHOT_STATUSES)[number],
+        ) && isTerminalTaskStatus(task.status),
+    )
     .map((task) => task.id)
     .join('|');
 
@@ -67,9 +84,12 @@ export function useTaskProgressPolling({ tasks, onUnauthorized }: UseTaskProgres
 
       setSnapshots((previous) => {
         const current = previous[taskId];
-        const nextProgress = canReplaceProgress(current?.progress ?? null, response.data.progress ?? null)
-          ? response.data.progress ?? null
-          : current?.progress ?? null;
+        const nextProgress = canReplaceProgress(
+          current?.progress ?? null,
+          response.data.progress ?? null,
+        )
+          ? (response.data.progress ?? null)
+          : (current?.progress ?? null);
 
         return {
           ...previous,
@@ -82,7 +102,11 @@ export function useTaskProgressPolling({ tasks, onUnauthorized }: UseTaskProgres
         };
       });
     } catch (error) {
-      if (error instanceof Error && 'kind' in error && error.kind === 'aborted') {
+      if (
+        error instanceof Error &&
+        'kind' in error &&
+        error.kind === 'aborted'
+      ) {
         return;
       }
       if (isAuthExitError(error)) {
@@ -113,22 +137,33 @@ export function useTaskProgressPolling({ tasks, onUnauthorized }: UseTaskProgres
     const taskIds = taskIdsToPoll.split('|');
     const activeIds = new Set(taskIdsToPoll ? taskIds : []);
     for (const [taskId, controller] of inFlight) {
-      if (!activeIds.has(taskId)) controller.abort();
+      if (!activeIds.has(taskId)) {
+        controller.abort();
+      }
     }
     setSnapshots((previous) => {
       const next = { ...previous };
       for (const taskId of Object.keys(next)) {
-        if (!tasks.some((task) => task.id === taskId)) delete next[taskId];
+        if (!tasks.some((task) => task.id === taskId)) {
+          delete next[taskId];
+        }
       }
       return next;
     });
-    if (!taskIdsToPoll) return;
+    if (!taskIdsToPoll) {
+      return;
+    }
     taskIds.forEach((taskId) => void fetchTaskSnapshot(taskId));
-    const timer = window.setInterval(() => taskIds.forEach((taskId) => void fetchTaskSnapshot(taskId)), 2500);
+    const timer = window.setInterval(
+      () => taskIds.forEach((taskId) => void fetchTaskSnapshot(taskId)),
+      2500,
+    );
 
     return () => {
       window.clearInterval(timer);
-      for (const taskId of taskIds) inFlight.get(taskId)?.abort();
+      for (const taskId of taskIds) {
+        inFlight.get(taskId)?.abort();
+      }
     };
   }, [taskIdsToPoll, tasks]);
 
@@ -145,10 +180,15 @@ export function useTaskProgressPolling({ tasks, onUnauthorized }: UseTaskProgres
     });
   }, [terminalTaskIds]);
 
-  useEffect(() => () => {
-    for (const controller of inFlightRef.current.values()) controller.abort();
-    inFlightRef.current.clear();
-  }, []);
+  useEffect(
+    () => () => {
+      for (const controller of inFlightRef.current.values()) {
+        controller.abort();
+      }
+      inFlightRef.current.clear();
+    },
+    [],
+  );
 
   return snapshots;
 }

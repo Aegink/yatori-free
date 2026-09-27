@@ -11,11 +11,18 @@ export function getStudyMetricPercent(metric: StudyMetricProgress) {
     return null;
   }
 
-  return clampPercent(((metric.current - metric.baseline) / targetIncrement) * 100);
+  return clampPercent(
+    ((metric.current - metric.baseline) / targetIncrement) * 100,
+  );
 }
 
 export function getStudyProgressPercents(courses: CourseStudyProgress[]) {
-  return courses.flatMap((course) => [course.visitCount, course.videoStudyMinutes, course.readMinutes])
+  return courses
+    .flatMap((course) => [
+      course.visitCount,
+      course.videoStudyMinutes,
+      course.readMinutes,
+    ])
     .map(getStudyMetricPercent)
     .filter((percent): percent is number => percent !== null);
 }

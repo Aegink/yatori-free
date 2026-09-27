@@ -48,8 +48,16 @@ export function TaskStatusContent({
               className={`pointer-events-none absolute bottom-0 left-0 h-0.5 w-20 rounded-full bg-primary transition-transform duration-280 ease-emphasized motion-reduce:transition-none ${taskFilter === 'completed' ? 'translate-x-20' : 'translate-x-0'}`}
             />
             {[
-              { id: 'active' as const, label: '进行中', count: taskCounts.active },
-              { id: 'completed' as const, label: '已结束', count: taskCounts.completed },
+              {
+                id: 'active' as const,
+                label: '进行中',
+                count: taskCounts.active,
+              },
+              {
+                id: 'completed' as const,
+                label: '已结束',
+                count: taskCounts.completed,
+              },
             ].map((filter) => (
               <button
                 key={filter.id}
@@ -63,11 +71,13 @@ export function TaskStatusContent({
                 aria-pressed={taskFilter === filter.id}
               >
                 {filter.label}
-                <span className={`rounded-full px-1.5 py-0.5 font-mono text-[11px] tabular-nums transition-colors ${
-                  taskFilter === filter.id
-                    ? 'bg-primary/10 text-primary font-semibold'
-                    : 'bg-muted/70 text-muted-foreground'
-                }`}>
+                <span
+                  className={`rounded-full px-1.5 py-0.5 font-mono text-[11px] tabular-nums transition-colors ${
+                    taskFilter === filter.id
+                      ? 'bg-primary/10 text-primary font-semibold'
+                      : 'bg-muted/70 text-muted-foreground'
+                  }`}
+                >
                   {filter.count}
                 </span>
               </button>
@@ -84,7 +94,9 @@ export function TaskStatusContent({
           className="h-8 w-8 shrink-0 rounded-md sm:h-9 sm:w-9"
           aria-label="刷新任务列表"
         >
-          <RefreshCw className={`h-4 w-4 ${tasksLoading ? 'animate-spin' : ''}`} />
+          <RefreshCw
+            className={`h-4 w-4 ${tasksLoading ? 'animate-spin' : ''}`}
+          />
         </Button>
       </div>
 
@@ -106,12 +118,18 @@ export function TaskStatusContent({
               <Activity className="h-6 w-6 stroke-[1.5]" />
             </div>
             <p className="text-xs text-muted-foreground">
-              {taskFilter === 'active' ? '暂无进行中的任务' : '暂无已结束的任务'}
+              {taskFilter === 'active'
+                ? '暂无进行中的任务'
+                : '暂无已结束的任务'}
             </p>
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onTaskFilterChange(taskFilter === 'active' ? 'completed' : 'active')}
+              onClick={() =>
+                onTaskFilterChange(
+                  taskFilter === 'active' ? 'completed' : 'active',
+                )
+              }
               className="h-9 text-xs"
             >
               {taskFilter === 'active' ? '查看已结束' : '查看进行中'}
@@ -125,7 +143,9 @@ export function TaskStatusContent({
                 task={task}
                 snapshot={taskSnapshots[task.id]}
                 courseNameByIdentifier={courseNameByIdentifier}
-                courseTaskPointProgressByIdentifier={courseTaskPointProgressByIdentifier}
+                courseTaskPointProgressByIdentifier={
+                  courseTaskPointProgressByIdentifier
+                }
                 onStopTask={onStopTask}
               />
             ))}

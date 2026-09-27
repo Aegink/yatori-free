@@ -53,7 +53,16 @@ function formatCourseDate(value?: string) {
   const isoDate = value.match(/^\d{4}-\d{2}-\d{2}/)?.[0];
   if (isoDate) return isoDate;
   const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? value : date.toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit' }).replaceAll('/', '-');
+  return Number.isNaN(date.getTime())
+    ? value
+    : date
+        .toLocaleDateString('zh-CN', {
+          timeZone: 'Asia/Shanghai',
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+        })
+        .replaceAll('/', '-');
 }
 
 export function CourseListSection({
@@ -88,11 +97,17 @@ export function CourseListSection({
   const isCourseSearchComposing = useRef(false);
 
   return (
-    <TabsContent forceMount value="courses" className="m-0 outline-none data-[state=inactive]:hidden lg:min-h-0 lg:flex-1">
+    <TabsContent
+      forceMount
+      value="courses"
+      className="m-0 outline-none data-[state=inactive]:hidden lg:min-h-0 lg:flex-1"
+    >
       <Card className="rounded-none border-none bg-card py-0 shadow-none ring-0 sm:rounded-xl sm:py-4 sm:shadow-sm lg:flex lg:h-full lg:min-h-0 lg:flex-col">
         <CardHeader className="flex flex-row items-center justify-between gap-2 border-b border-border/50 px-3 py-2 sm:px-6 sm:py-3.5">
           <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-            <CardTitle className="hidden whitespace-nowrap text-sm font-semibold sm:block lg:hidden">课程列表</CardTitle>
+            <CardTitle className="hidden whitespace-nowrap text-sm font-semibold sm:block lg:hidden">
+              课程列表
+            </CardTitle>
             {selectableCourses.length > 0 && (
               <CourseBulkSelectionMenu
                 allSelected={isAllSelected}
@@ -144,7 +159,10 @@ export function CourseListSection({
               )}
             </div>
             {courseSearchQuery.trim() && (
-              <span className="hidden whitespace-nowrap text-xs text-muted-foreground xl:inline" role="status">
+              <span
+                className="hidden whitespace-nowrap text-xs text-muted-foreground xl:inline"
+                role="status"
+              >
                 找到 {filteredCourses.length} 门课程
               </span>
             )}
@@ -157,7 +175,9 @@ export function CourseListSection({
               title="刷新课程"
               aria-label="刷新课程"
             >
-              <RefreshCw className={`h-4 w-4 ${coursesLoading ? 'animate-spin' : ''}`} />
+              <RefreshCw
+                className={`h-4 w-4 ${coursesLoading ? 'animate-spin' : ''}`}
+              />
             </Button>
           </div>
         </CardHeader>
@@ -172,7 +192,14 @@ export function CourseListSection({
           {coursesLoading ? (
             <div className="flex flex-col items-center justify-center p-12 text-sm text-muted-foreground">
               <svg className="google-spinner" viewBox="0 0 50 50">
-                <circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="4" />
+                <circle
+                  className="path"
+                  cx="25"
+                  cy="25"
+                  r="20"
+                  fill="none"
+                  strokeWidth="4"
+                />
               </svg>
               <p className="mt-4">拉取课程列表中...</p>
             </div>
@@ -189,42 +216,69 @@ export function CourseListSection({
           ) : filteredCourses.length === 0 ? (
             <div className="p-12 text-center font-sans text-sm text-muted-foreground">
               <AlertCircle className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
-              {courseSearchQuery.trim() ? '没有匹配的课程，请调整搜索条件。' : '没有可显示课程，请刷新课程后重试。'}
+              {courseSearchQuery.trim()
+                ? '没有匹配的课程，请调整搜索条件。'
+                : '没有可显示课程，请刷新课程后重试。'}
             </div>
           ) : (
             <div className="divide-y divide-border">
               {filteredCourses.map((course) => {
                 const jobFinishCount = course.jobFinishCount;
                 const jobCount = course.jobCount;
-                const hasJobProgress = typeof jobFinishCount === 'number' && typeof jobCount === 'number';
-                const calculatedJobRate = hasJobProgress && jobCount > 0
-                  ? Math.round((jobFinishCount / jobCount) * 100)
-                  : null;
+                const hasJobProgress =
+                  typeof jobFinishCount === 'number' &&
+                  typeof jobCount === 'number';
+                const calculatedJobRate =
+                  hasJobProgress && jobCount > 0
+                    ? Math.round((jobFinishCount / jobCount) * 100)
+                    : null;
                 const rawJobRate = course.jobRate ?? calculatedJobRate;
-                const jobRate = rawJobRate === null ? null : Math.round(Math.max(0, Math.min(100, rawJobRate)));
-                const jobProgressLabel = hasJobProgress ? `${jobFinishCount}/${jobCount} (${jobRate ?? 0}%)` : null;
+                const jobRate =
+                  rawJobRate === null
+                    ? null
+                    : Math.round(Math.max(0, Math.min(100, rawJobRate)));
+                const jobProgressLabel = hasJobProgress
+                  ? `${jobFinishCount}/${jobCount} (${jobRate ?? 0}%)`
+                  : null;
                 const isProcessing = course.processing === true;
-                const processingTaskLabel = course.processingTaskId ? course.processingTaskId.substring(0, 8) : null;
-                const canStopProcessing = isProcessing && Boolean(course.processingTaskId);
-                const isStoppingProcessing = course.processingTaskId === stoppingTaskId;
+                const processingTaskLabel = course.processingTaskId
+                  ? course.processingTaskId.substring(0, 8)
+                  : null;
+                const canStopProcessing =
+                  isProcessing && Boolean(course.processingTaskId);
+                const isStoppingProcessing =
+                  course.processingTaskId === stoppingTaskId;
                 const isExpanded = expandedCourses.has(course.key);
-                const isCourseOutlineFullyExpanded = fullyExpandedCourseOutlines.has(course.key);
+                const isCourseOutlineFullyExpanded =
+                  fullyExpandedCourseOutlines.has(course.key);
                 const isSelected = selectedCourses.has(course.key);
-                const handleCourseRowClick = (event: MouseEvent<HTMLDivElement>) => {
+                const handleCourseRowClick = (
+                  event: MouseEvent<HTMLDivElement>,
+                ) => {
                   const target = event.target as HTMLElement;
-                  if (target.closest('button, input, a, [role="checkbox"]')) return;
+                  if (target.closest('button, input, a, [role="checkbox"]'))
+                    return;
                   onToggleCourseSelection(course.key);
                 };
 
                 return (
-                  <div key={course.key} className="border-b border-border/40 last:border-0">
-                    <div onClick={handleCourseRowClick} className={`relative grid cursor-pointer grid-cols-[2rem_minmax(0,1fr)_auto] items-center gap-x-2 px-3 py-3.5 transition-colors duration-200 ease-standard sm:grid-cols-[auto_minmax(0,1fr)_13rem] sm:gap-x-4 sm:p-5 ${
-                      isSelected
-                        ? 'bg-primary/5 hover:bg-primary/10 dark:bg-primary/10 dark:hover:bg-primary/15'
-                        : 'hover:bg-muted/40'
-                    }`}>
+                  <div
+                    key={course.key}
+                    className="border-b border-border/40 last:border-0"
+                  >
+                    <div
+                      onClick={handleCourseRowClick}
+                      className={`relative grid cursor-pointer grid-cols-[2rem_minmax(0,1fr)_auto] items-center gap-x-2 px-3 py-3.5 transition-colors duration-200 ease-standard sm:grid-cols-[auto_minmax(0,1fr)_13rem] sm:gap-x-4 sm:p-5 ${
+                        isSelected
+                          ? 'bg-primary/5 hover:bg-primary/10 dark:bg-primary/10 dark:hover:bg-primary/15'
+                          : 'hover:bg-muted/40'
+                      }`}
+                    >
                       {isSelected && (
-                        <span aria-hidden="true" className="absolute inset-y-2 left-0 w-1 rounded-r bg-primary" />
+                        <span
+                          aria-hidden="true"
+                          className="absolute inset-y-2 left-0 w-1 rounded-r bg-primary"
+                        />
                       )}
                       <div className="contents">
                         <CourseCheckbox
@@ -234,25 +288,34 @@ export function CourseListSection({
                           aria-label={`选择课程：${course.courseName}`}
                           onChange={() => onToggleCourseSelection(course.key)}
                         />
-                          <button
-                            type="button"
-                            className="min-w-0 w-full text-left"
-                            onClick={() => onToggleCourseSelection(course.key)}
-                            aria-pressed={isSelected}
-                          >
+                        <button
+                          type="button"
+                          className="min-w-0 w-full text-left"
+                          onClick={() => onToggleCourseSelection(course.key)}
+                          aria-pressed={isSelected}
+                        >
                           <div className="sm:flex sm:min-w-0 sm:items-center sm:gap-4">
                             <div className="min-w-0 sm:w-52 sm:shrink-0 lg:w-56">
                               <div className="flex min-w-0 flex-wrap items-center gap-2">
-                                <h3 className="truncate text-xs font-semibold text-foreground sm:text-sm">{course.courseName}</h3>
+                                <h3 className="truncate text-xs font-semibold text-foreground sm:text-sm">
+                                  {course.courseName}
+                                </h3>
                                 {isProcessing && (
-                                  <Badge variant="outline" className="border-warning/20 bg-warning-container text-warning">
+                                  <Badge
+                                    variant="outline"
+                                    className="border-warning/20 bg-warning-container text-warning"
+                                  >
                                     处理中
                                   </Badge>
                                 )}
                               </div>
                               {(course.beginDate || course.endDate) && (
                                 <p className="mt-1 truncate text-[11px] text-muted-foreground">
-                                  开课时间：{formatCourseDate(course.beginDate) ?? '未设置'}~{formatCourseDate(course.endDate) ?? '未设置'}
+                                  开课时间：
+                                  {formatCourseDate(course.beginDate) ??
+                                    '未设置'}
+                                  ~
+                                  {formatCourseDate(course.endDate) ?? '未设置'}
                                 </p>
                               )}
                               {processingTaskLabel && (
@@ -263,14 +326,17 @@ export function CourseListSection({
                             </div>
                             {jobRate !== null && jobProgressLabel && (
                               <div className="mt-1.5 grid w-full min-w-0 flex-1 grid-cols-[minmax(0,1fr)_7rem] items-center gap-2 sm:mt-0 sm:grid-cols-[minmax(0,1fr)_8rem] sm:gap-3">
-                                <Progress value={jobRate} className={`h-1.5 bg-muted ${isProcessing ? 'progress-running' : ''}`} />
+                                <Progress
+                                  value={jobRate}
+                                  className={`h-1.5 bg-muted ${isProcessing ? 'progress-running' : ''}`}
+                                />
                                 <span className="whitespace-nowrap text-xs font-semibold tabular-nums text-muted-foreground">
                                   {jobProgressLabel}
                                 </span>
                               </div>
                             )}
                           </div>
-                          </button>
+                        </button>
                       </div>
 
                       <div className="flex items-center justify-end gap-1 sm:w-52 sm:flex-nowrap sm:gap-2">
@@ -279,12 +345,22 @@ export function CourseListSection({
                             variant="outline"
                             size="sm"
                             disabled={isStoppingProcessing}
-                            onClick={() => onStopTask(course.processingTaskId as string)}
+                            onClick={() =>
+                              onStopTask(course.processingTaskId as string)
+                            }
                             className="h-8 w-8 gap-1 rounded border-danger/30 px-0 text-xs text-danger hover:border-danger hover:bg-danger-container/20 sm:w-auto sm:px-2.5"
-                            aria-label={isStoppingProcessing ? '停止任务中' : '停止任务'}
+                            aria-label={
+                              isStoppingProcessing ? '停止任务中' : '停止任务'
+                            }
                           >
-                            {isStoppingProcessing ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Square className="h-3.5 w-3.5 fill-current" />}
-                            <span className="sr-only sm:not-sr-only">{isStoppingProcessing ? '停止中' : '停止'}</span>
+                            {isStoppingProcessing ? (
+                              <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+                            ) : (
+                              <Square className="h-3.5 w-3.5 fill-current" />
+                            )}
+                            <span className="sr-only sm:not-sr-only">
+                              {isStoppingProcessing ? '停止中' : '停止'}
+                            </span>
                           </Button>
                         )}
                         <Button
@@ -298,8 +374,12 @@ export function CourseListSection({
                           }`}
                           aria-label={isExpanded ? '收起章节' : '查看章节'}
                         >
-                          <span className="sr-only sm:not-sr-only">{isExpanded ? '收起章节' : '查看章节'}</span>
-                          <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ease-standard ${isExpanded ? 'rotate-180' : ''}`} />
+                          <span className="sr-only sm:not-sr-only">
+                            {isExpanded ? '收起章节' : '查看章节'}
+                          </span>
+                          <ChevronDown
+                            className={`h-3.5 w-3.5 transition-transform duration-200 ease-standard ${isExpanded ? 'rotate-180' : ''}`}
+                          />
                         </Button>
                       </div>
                     </div>
@@ -308,8 +388,18 @@ export function CourseListSection({
                       <div className="border-t border-border/40 bg-muted/20 px-3 pb-3 pl-11 pt-3 sm:px-5 sm:pb-5 sm:pl-12 sm:pt-4 animate-in fade-in-0 duration-240 ease-emphasized">
                         {loadingDetails[course.key] ? (
                           <div className="flex items-center gap-2 py-4 text-xs text-muted-foreground">
-                            <svg className="google-spinner h-4 w-4" viewBox="0 0 50 50">
-                              <circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="4" />
+                            <svg
+                              className="google-spinner h-4 w-4"
+                              viewBox="0 0 50 50"
+                            >
+                              <circle
+                                className="path"
+                                cx="25"
+                                cy="25"
+                                r="20"
+                                fill="none"
+                                strokeWidth="4"
+                              />
                             </svg>
                             <span>正在拉取章节...</span>
                           </div>
@@ -319,10 +409,14 @@ export function CourseListSection({
                             courseKey={course.key}
                             courseDetails={courseDetailsMap[course.key]}
                             isFullyExpanded={isCourseOutlineFullyExpanded}
-                            onToggleFullOutline={() => onToggleFullCourseOutline(course.key)}
+                            onToggleFullOutline={() =>
+                              onToggleFullCourseOutline(course.key)
+                            }
                           />
                         ) : (
-                          <div className="py-2 text-xs text-muted-foreground">无法加载章节。请点击右上角刷新重试。</div>
+                          <div className="py-2 text-xs text-muted-foreground">
+                            无法加载章节。请点击右上角刷新重试。
+                          </div>
                         )}
                       </div>
                     )}

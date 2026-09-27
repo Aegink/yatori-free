@@ -8,26 +8,26 @@ export interface StoredQRLoginSession extends QRSessionData {
 
 function isStoredQRLoginSession(value: unknown): value is StoredQRLoginSession {
   if (
-    value === null
-    || typeof value !== 'object'
-    || !('id' in value)
-    || !('status' in value)
-    || !('expiresAt' in value)
-    || !('pollIntervalMs' in value)
-    || !('qrContent' in value)
+    value === null ||
+    typeof value !== 'object' ||
+    !('id' in value) ||
+    !('status' in value) ||
+    !('expiresAt' in value) ||
+    !('pollIntervalMs' in value) ||
+    !('qrContent' in value)
   ) {
     return false;
   }
 
   return (
-    typeof value.id === 'string'
-    && typeof value.status === 'string'
-    && ['pending', 'scanned'].includes(value.status)
-    && typeof value.expiresAt === 'string'
-    && typeof value.pollIntervalMs === 'number'
-    && Number.isFinite(value.pollIntervalMs)
-    && typeof value.qrContent === 'string'
-    && value.qrContent.length > 0
+    typeof value.id === 'string' &&
+    typeof value.status === 'string' &&
+    ['pending', 'scanned'].includes(value.status) &&
+    typeof value.expiresAt === 'string' &&
+    typeof value.pollIntervalMs === 'number' &&
+    Number.isFinite(value.pollIntervalMs) &&
+    typeof value.qrContent === 'string' &&
+    value.qrContent.length > 0
   );
 }
 
@@ -57,9 +57,9 @@ export function readQRLoginSession() {
 
 export function writeQRLoginSession(session: QRSessionData) {
   if (
-    !session.qrContent
-    || !['pending', 'scanned'].includes(session.status)
-    || isExpired(session.expiresAt)
+    !session.qrContent ||
+    !['pending', 'scanned'].includes(session.status) ||
+    isExpired(session.expiresAt)
   ) {
     clearQRLoginSession();
     return;

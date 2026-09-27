@@ -6,9 +6,15 @@ interface CourseProgressSummaryProps {
   activeTaskCount: number;
 }
 
-export function CourseProgressSummary({ visibleCount, incompleteCount, activeTaskCount }: CourseProgressSummaryProps) {
+export function CourseProgressSummary({
+  visibleCount,
+  incompleteCount,
+  activeTaskCount,
+}: CourseProgressSummaryProps) {
   const completedCount = Math.max(visibleCount - incompleteCount, 0);
-  const percent = visibleCount ? Math.round((completedCount / visibleCount) * 100) : 0;
+  const percent = visibleCount
+    ? Math.round((completedCount / visibleCount) * 100)
+    : 0;
 
   return (
     <Card className="mb-3 rounded-none border-x-0 border-border/60 bg-card/90 shadow-none sm:mb-4 sm:rounded-xl sm:border-x sm:shadow-rest">
@@ -16,13 +22,17 @@ export function CourseProgressSummary({ visibleCount, incompleteCount, activeTas
         <div className="min-w-0 flex-1">
           <div className="mb-2 flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <p className="text-sm font-semibold tracking-tight text-foreground">学习进度</p>
+              <p className="text-sm font-semibold tracking-tight text-foreground">
+                学习进度
+              </p>
               <span className="rounded bg-muted/60 px-1.5 py-0.5 font-mono text-[11px] font-medium tabular-nums text-muted-foreground">
                 {percent}%
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="shrink-0 text-xs tabular-nums text-muted-foreground">{completedCount} / {visibleCount} 门已完成</span>
+              <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
+                {completedCount} / {visibleCount} 门已完成
+              </span>
               {incompleteCount > 0 && (
                 <span className="inline-flex items-center rounded-full border border-warning/20 bg-warning-container/30 px-1.5 py-0.2 text-[10px] font-medium text-warning sm:hidden">
                   {incompleteCount} 待处理

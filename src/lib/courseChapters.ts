@@ -1,4 +1,9 @@
-import type { Chapter, CourseDetails, CourseDocument, CourseTaskPoint } from './api';
+import type {
+  Chapter,
+  CourseDetails,
+  CourseDocument,
+  CourseTaskPoint,
+} from './api';
 
 export interface ChapterTaskMeta {
   total: number;
@@ -14,10 +19,7 @@ export interface CourseTaskPointGroup {
 
 type RawRecord = Record<string, unknown>;
 
-const CHAPTER_ARRAY_KEYS = [
-  'knowledge',
-  'children',
-] as const;
+const CHAPTER_ARRAY_KEYS = ['knowledge', 'children'] as const;
 
 function toSafeNumber(value: unknown) {
   if (typeof value === 'number') {
@@ -53,10 +55,10 @@ function toChapter(record: RawRecord): Chapter | null {
   const label = record.label;
 
   if (
-    (typeof id !== 'string' && typeof id !== 'number')
-    || typeof name !== 'string'
-    || !name.trim()
-    || !hasChapterMetric(record)
+    (typeof id !== 'string' && typeof id !== 'number') ||
+    typeof name !== 'string' ||
+    !name.trim() ||
+    !hasChapterMetric(record)
   ) {
     return null;
   }
@@ -165,7 +167,9 @@ export function getChapterTaskMetas(chapters: Chapter[]) {
   }));
 }
 
-export function getCourseTaskPointGroups(taskPoints: CourseTaskPoint[] | null = []) {
+export function getCourseTaskPointGroups(
+  taskPoints: CourseTaskPoint[] | null = [],
+) {
   const groups = new Map<string, CourseTaskPointGroup>();
 
   for (const taskPoint of taskPoints ?? []) {
@@ -190,7 +194,11 @@ export function getCourseTaskPointGroups(taskPoints: CourseTaskPoint[] | null = 
 }
 
 export function hasReadTaskPoints(courseDetails?: CourseDetails) {
-  return courseDetails?.taskPoints?.some((taskPoint) => taskPoint.kind === 'reading') === true;
+  return (
+    courseDetails?.taskPoints?.some(
+      (taskPoint) => taskPoint.kind === 'reading',
+    ) === true
+  );
 }
 
 function normalizeMatchValue(value: unknown) {
@@ -205,10 +213,15 @@ function normalizeMatchValue(value: unknown) {
   return '';
 }
 
-export function getChapterDocuments(chapter: Chapter, documents: CourseDocument[] | null = []) {
+export function getChapterDocuments(
+  chapter: Chapter,
+  documents: CourseDocument[] | null = [],
+) {
   const chapterId = normalizeMatchValue(chapter.id);
   return (documents ?? []).filter((document) => {
     const documentChapterId = normalizeMatchValue(document.chapterId);
-    return Boolean(chapterId && documentChapterId && chapterId === documentChapterId);
+    return Boolean(
+      chapterId && documentChapterId && chapterId === documentChapterId,
+    );
   });
 }

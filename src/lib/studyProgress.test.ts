@@ -1,7 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { getStudyMetricPercent, getStudyProgressPercents } from './studyProgress';
+import {
+  getStudyMetricPercent,
+  getStudyProgressPercents,
+} from './studyProgress';
 
-const metric = (current: number, baseline = 10, target = 20, status: 'running' | 'disabled' = 'running') => ({ baseline, current, target, status, message: '' });
+const metric = (
+  current: number,
+  baseline = 10,
+  target = 20,
+  status: 'running' | 'disabled' = 'running',
+) => ({ baseline, current, target, status, message: '' });
 
 describe('study progress', () => {
   it('returns null for disabled or non-positive targets and clamps percentages', () => {
@@ -13,6 +21,16 @@ describe('study progress', () => {
   });
 
   it('omits unavailable metrics from the aggregate list', () => {
-    expect(getStudyProgressPercents([{ classId: '1', courseName: 'A', visitCount: metric(15), videoStudyMinutes: metric(1, 1, 1), readMinutes: metric(30) }])).toEqual([50, 100]);
+    expect(
+      getStudyProgressPercents([
+        {
+          classId: '1',
+          courseName: 'A',
+          visitCount: metric(15),
+          videoStudyMinutes: metric(1, 1, 1),
+          readMinutes: metric(30),
+        },
+      ]),
+    ).toEqual([50, 100]);
   });
 });

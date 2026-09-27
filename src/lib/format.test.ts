@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { formatLocalDateTime, getDeadlineUrgencyLabel, hasDeadlinePassed } from './format';
+import {
+  formatLocalDateTime,
+  getDeadlineUrgencyLabel,
+  hasDeadlinePassed,
+} from './format';
 
 describe('hasDeadlinePassed', () => {
   const now = new Date(2026, 8, 20, 12).getTime();
@@ -29,12 +33,19 @@ describe('formatLocalDateTime', () => {
   it('formats Unix millisecond timestamps returned by course task APIs', () => {
     const timestamp = new Date(2026, 8, 19, 12, 34, 56).getTime();
 
-    expect(formatLocalDateTime(timestamp, { includeYear: true })).toBe('2026-09-19 12:34:56');
+    expect(formatLocalDateTime(timestamp, { includeYear: true })).toBe(
+      '2026-09-19 12:34:56',
+    );
   });
 
   it('can omit seconds', () => {
     const timestamp = new Date(2026, 8, 19, 12, 34, 56).getTime();
 
-    expect(formatLocalDateTime(timestamp, { includeYear: true, includeSeconds: false })).toBe('2026-09-19 12:34');
+    expect(
+      formatLocalDateTime(timestamp, {
+        includeYear: true,
+        includeSeconds: false,
+      }),
+    ).toBe('2026-09-19 12:34');
   });
 });

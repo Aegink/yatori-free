@@ -26,7 +26,10 @@ export function getSessionCached<T>(key: string, request: () => Promise<T>) {
   const requestVersion = versions.get(key) ?? 0;
   const nextRequest = request()
     .then((value) => {
-      if (generation === requestGeneration && (versions.get(key) ?? 0) === requestVersion) {
+      if (
+        generation === requestGeneration &&
+        (versions.get(key) ?? 0) === requestVersion
+      ) {
         values.set(key, value);
       }
       return value;

@@ -1,17 +1,26 @@
-import { useState } from 'react';
-import { AlertCircle, BookOpen, Clock3, Eye, LoaderCircle, Minus, Plus, SlidersHorizontal } from 'lucide-react';
-import { Badge } from './ui/badge';
-import { Button } from './ui/button';
+import { useState } from "react";
+import {
+  AlertCircle,
+  BookOpen,
+  Clock3,
+  Eye,
+  LoaderCircle,
+  Minus,
+  Plus,
+  SlidersHorizontal,
+} from "lucide-react";
+import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from './ui/dialog';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import type { Course, StudyIncrement, StudyStats } from '@/lib/api';
+} from "./ui/dialog";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import type { Course, StudyIncrement, StudyStats } from "@/lib/api";
 
 interface StudyIncrementSettingsProps {
   open: boolean;
@@ -53,10 +62,10 @@ function StepperField({
   const setValue = (nextValue: number) => {
     onChange(String(Math.min(maximum, Math.max(0, Math.trunc(nextValue)))));
   };
-  const numericValue = value === '' ? 0 : Number(value);
+  const numericValue = value === "" ? 0 : Number(value);
   const updateValue = (nextValue: string) => {
-    if (nextValue === '') {
-      onChange('');
+    if (nextValue === "") {
+      onChange("");
       return;
     }
 
@@ -67,27 +76,43 @@ function StepperField({
   };
 
   return (
-    <section className="space-y-2 rounded-lg border border-border/70 bg-card p-2.5 shadow-xs sm:space-y-3 sm:rounded-xl sm:p-4" aria-labelledby={`${id}-label`}>
+    <section
+      className="space-y-2 rounded-lg border border-border/70 bg-card p-2.5 shadow-xs sm:space-y-3 sm:rounded-xl sm:p-4"
+      aria-labelledby={`${id}-label`}
+    >
       <div className="flex items-start justify-between gap-2 sm:gap-3">
         <div className="flex min-w-0 items-center gap-2 sm:gap-2.5">
           <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary sm:size-8 sm:rounded-lg">
             <Icon className="h-4 w-4" />
           </span>
           <div className="min-w-0">
-            <Label id={`${id}-label`} htmlFor={id} className="text-sm font-semibold text-foreground">
+            <Label
+              id={`${id}-label`}
+              htmlFor={id}
+              className="text-sm font-semibold text-foreground"
+            >
               {label}
             </Label>
-            <p id={`${id}-current`} className="mt-0.5 flex shrink-0 items-baseline gap-1 whitespace-nowrap text-xs font-medium text-foreground sm:mt-1 sm:gap-1.5 sm:text-sm">
+            <p
+              id={`${id}-current`}
+              className="mt-0.5 flex shrink-0 items-baseline gap-1 whitespace-nowrap text-xs font-medium text-foreground sm:mt-1 sm:gap-1.5 sm:text-sm"
+            >
               <span className="text-muted-foreground">当前累计</span>
               <span className="text-sm font-semibold tabular-nums text-primary sm:text-base">
-                {currentValue ?? '--'}
-                {currentValue !== undefined && <span className="ml-0.5 text-sm font-medium">{unit}</span>}
+                {currentValue ?? "--"}
+                {currentValue !== undefined && (
+                  <span className="ml-0.5 text-sm font-medium">{unit}</span>
+                )}
               </span>
             </p>
           </div>
         </div>
-        <Badge variant="outline" className="shrink-0 font-normal tabular-nums text-muted-foreground">
-          上限 {maximum}{unit}
+        <Badge
+          variant="outline"
+          className="shrink-0 font-normal tabular-nums text-muted-foreground"
+        >
+          上限 {maximum}
+          {unit}
         </Badge>
       </div>
       <div className="grid grid-cols-[2.25rem_minmax(0,1fr)_2.25rem] items-center gap-2 sm:grid-cols-[2.75rem_minmax(0,1fr)_2.75rem]">
@@ -137,16 +162,23 @@ function StepperField({
           <Button
             key={preset}
             type="button"
-            variant={numericValue === preset ? 'secondary' : 'outline'}
+            variant={numericValue === preset ? "secondary" : "outline"}
             size="sm"
             className="h-7 px-2.5 text-xs"
             onClick={() => setValue(preset)}
           >
-            {preset}{unit}
+            {preset}
+            {unit}
           </Button>
         ))}
         {numericValue > 0 && (
-          <Button type="button" variant="ghost" size="sm" className="ml-auto h-7 px-2 text-xs" onClick={() => onChange('')}>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="ml-auto h-7 px-2 text-xs"
+            onClick={() => onChange("")}
+          >
             清零
           </Button>
         )}
@@ -173,7 +205,13 @@ export function StudyIncrementSettings({
       key={course.key}
       course={course}
       hasReadTaskPoints={hasReadTaskPoints}
-      initialValue={values[course.key] ?? { visitCount: 0, videoStudyMinutes: 0, readMinutes: 0 }}
+      initialValue={
+        values[course.key] ?? {
+          visitCount: 0,
+          videoStudyMinutes: 0,
+          readMinutes: 0,
+        }
+      }
       studyStats={studyStats}
       statsLoaded={statsLoaded}
       loadingStats={loadingStats}
@@ -210,9 +248,10 @@ function StudyIncrementDialog({
   const initialVideoStudyMinutes = initialValue.videoStudyMinutes ?? 0;
   const initialReadMinutes = initialValue.readMinutes ?? 0;
   const [draft, setDraft] = useState({
-    visitCount: initialVisitCount === 0 ? '' : String(initialVisitCount),
-    videoStudyMinutes: initialVideoStudyMinutes === 0 ? '' : String(initialVideoStudyMinutes),
-    readMinutes: initialReadMinutes === 0 ? '' : String(initialReadMinutes),
+    visitCount: initialVisitCount === 0 ? "" : String(initialVisitCount),
+    videoStudyMinutes:
+      initialVideoStudyMinutes === 0 ? "" : String(initialVideoStudyMinutes),
+    readMinutes: initialReadMinutes === 0 ? "" : String(initialReadMinutes),
   });
 
   const updateDraft = (field: keyof StudyIncrement, value: string) => {
@@ -222,9 +261,13 @@ function StudyIncrementDialog({
   const save = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     onSave(course.key, {
-      visitCount: draft.visitCount === '' ? 0 : Number(draft.visitCount),
-      videoStudyMinutes: draft.videoStudyMinutes === '' ? 0 : Number(draft.videoStudyMinutes),
-      readMinutes: hasReadTaskPoints && draft.readMinutes !== '' ? Number(draft.readMinutes) : 0,
+      visitCount: draft.visitCount === "" ? 0 : Number(draft.visitCount),
+      videoStudyMinutes:
+        draft.videoStudyMinutes === "" ? 0 : Number(draft.videoStudyMinutes),
+      readMinutes:
+        hasReadTaskPoints && draft.readMinutes !== ""
+          ? Number(draft.readMinutes)
+          : 0,
     });
     onOpenChange(false);
   };
@@ -249,25 +292,34 @@ function StudyIncrementDialog({
                 {courseDetailsLoading ? (
                   <>
                     <LoaderCircle className="h-5 w-5 animate-spin text-primary" />
-                    <p className="text-sm font-medium text-foreground">正在读取课程任务</p>
+                    <p className="text-sm font-medium text-foreground">
+                      正在读取课程任务
+                    </p>
                   </>
                 ) : (
                   <>
                     <AlertCircle className="h-5 w-5 text-muted-foreground" />
-                    <p className="text-sm font-medium text-foreground">课程任务读取失败</p>
+                    <p className="text-sm font-medium text-foreground">
+                      课程任务读取失败
+                    </p>
                   </>
                 )}
               </div>
             ) : (
               <>
                 {!studyStats?.available && (
-                  <div className="flex items-start gap-2 rounded-lg bg-muted/40 px-3 py-2.5 text-xs text-muted-foreground" role="status">
+                  <div
+                    className="flex items-start gap-2 rounded-lg bg-muted/40 px-3 py-2.5 text-xs text-muted-foreground"
+                    role="status"
+                  >
                     <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-                    <span>{studyStats?.message || '当前学习数据不可用'}</span>
+                    <span>{studyStats?.message || "当前学习数据不可用"}</span>
                   </div>
                 )}
 
-                <h3 className="text-sm font-semibold text-foreground">本次增加</h3>
+                <h3 className="text-sm font-semibold text-foreground">
+                  本次增加
+                </h3>
 
                 <div className="space-y-2 sm:space-y-2.5">
                   <StepperField
@@ -275,24 +327,32 @@ function StudyIncrementDialog({
                     icon={Eye}
                     label="学习次数"
                     value={draft.visitCount}
-                    currentValue={studyStats?.available ? studyStats.visitCount : undefined}
+                    currentValue={
+                      studyStats?.available ? studyStats.visitCount : undefined
+                    }
                     maximum={400}
                     step={1}
                     presets={[10, 20, 50, 100]}
                     unit="次"
-                    onChange={(value) => updateDraft('visitCount', value)}
+                    onChange={(value) => updateDraft("visitCount", value)}
                   />
                   <StepperField
                     id={`study-video-minutes-${course.key}`}
                     icon={Clock3}
                     label="视频观看时长"
                     value={draft.videoStudyMinutes}
-                    currentValue={studyStats?.available ? studyStats.videoStudyMinutes : undefined}
+                    currentValue={
+                      studyStats?.available
+                        ? studyStats.videoStudyMinutes
+                        : undefined
+                    }
                     maximum={4000}
                     step={10}
                     presets={[30, 60, 120, 300]}
                     unit="分钟"
-                    onChange={(value) => updateDraft('videoStudyMinutes', value)}
+                    onChange={(value) =>
+                      updateDraft("videoStudyMinutes", value)
+                    }
                   />
                   {hasReadTaskPoints && (
                     <StepperField
@@ -300,12 +360,16 @@ function StudyIncrementDialog({
                       icon={BookOpen}
                       label="阅读时长"
                       value={draft.readMinutes}
-                      currentValue={studyStats?.available ? studyStats.readMinutes : undefined}
+                      currentValue={
+                        studyStats?.available
+                          ? studyStats.readMinutes
+                          : undefined
+                      }
                       maximum={4000}
                       step={10}
                       presets={[30, 60, 120, 300]}
                       unit="分钟"
-                      onChange={(value) => updateDraft('readMinutes', value)}
+                      onChange={(value) => updateDraft("readMinutes", value)}
                     />
                   )}
                 </div>
@@ -314,8 +378,16 @@ function StudyIncrementDialog({
           </div>
 
           <div className="flex shrink-0 justify-end gap-2 border-t border-border/50 bg-muted/30 p-2.5 pb-[calc(0.625rem+env(safe-area-inset-bottom))] sm:px-5 sm:py-3 sm:pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>取消</Button>
-            <Button type="submit" disabled={!courseDetailsReady}>保存目标</Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
+              取消
+            </Button>
+            <Button type="submit" disabled={!courseDetailsReady}>
+              保存目标
+            </Button>
           </div>
         </form>
       </DialogContent>

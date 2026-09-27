@@ -45,8 +45,11 @@ export async function readSavedAccount(): Promise<SavedAccount | null> {
 }
 
 export function saveSavedAccount(account: SavedAccount) {
-  localStorage.setItem(SAVED_ACCOUNT_KEY, JSON.stringify({
-    account: account.account.trim(),
-  }));
+  localStorage.setItem(
+    SAVED_ACCOUNT_KEY,
+    JSON.stringify({
+      account: account.account.trim(),
+    }),
+  );
   clearDeprecatedCredentials();
 }

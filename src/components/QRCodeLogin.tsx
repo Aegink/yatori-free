@@ -1,16 +1,20 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { QRCodeSVG } from 'qrcode.react';
-import { BrandMark } from './BrandMark';
-import { RefreshCw } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from "react";
+import { QRCodeSVG } from "qrcode.react";
+import { BrandMark } from "./BrandMark";
+import { RefreshCw } from "lucide-react";
 import {
   createQRSession,
   exchangeQRSession,
   getQRSession,
   getUserFacingErrorMessage,
-} from '@/lib/api';
-import type { LoginData, QRSessionData } from '@/lib/api';
-import { clearQRLoginSession, readQRLoginSession, writeQRLoginSession } from '@/lib/qrLoginSession';
-import { Button } from './ui/button';
+} from "@/lib/api";
+import type { LoginData, QRSessionData } from "@/lib/api";
+import {
+  clearQRLoginSession,
+  readQRLoginSession,
+  writeQRLoginSession,
+} from "@/lib/qrLoginSession";
+import { Button } from "./ui/button";
 
 interface QRCodeLoginProps {
   onLoginSuccess: (data: LoginData) => void;
@@ -18,34 +22,36 @@ interface QRCodeLoginProps {
 
 function getStatusMessage(session: QRSessionData) {
   switch (session.status) {
-    case 'scanned':
+    case "scanned":
       return session.scannedName
         ? `已识别 ${session.scannedName}，请在学习通中确认`
-        : '已扫码，请在学习通中确认登录';
-    case 'confirmed':
-      return '正在进入 Yatori...';
-    case 'failed':
-      return '扫码会话不可用';
+        : "已扫码，请在学习通中确认登录";
+    case "confirmed":
+      return "正在进入 Yatori...";
+    case "failed":
+      return "扫码会话不可用";
     default:
-      return '';
+      return "";
   }
 }
 
 function isMissingQRSession(error: unknown) {
   return (
-    typeof error === 'object'
-    && error !== null
-    && 'status' in error
-    && error.status === 404
+    typeof error === "object" &&
+    error !== null &&
+    "status" in error &&
+    error.status === 404
   );
 }
 
 export function QRCodeLogin({ onLoginSuccess }: QRCodeLoginProps) {
-  const [isDesktop, setIsDesktop] = useState(() => window.matchMedia('(min-width: 768px)').matches);
+  const [isDesktop, setIsDesktop] = useState(
+    () => window.matchMedia("(min-width: 768px)").matches,
+  );
   const [session, setSession] = useState<QRSessionData | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [isExchanging, setIsExchanging] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const claimedSessionIdRef = useRef<string | null>(null);
   const createAbortRef = useRef<AbortController | null>(null);
   const exchangeAbortRef = useRef<AbortController | null>(null);
@@ -56,7 +62,7 @@ export function QRCodeLogin({ onLoginSuccess }: QRCodeLoginProps) {
     const controller = new AbortController();
     createAbortRef.current = controller;
     setIsCreating(true);
-    setError('');
+    setError("");
     setSession(null);
     claimedSessionIdRef.current = null;
     clearQRLoginSession();
@@ -66,20 +72,25 @@ export function QRCodeLogin({ onLoginSuccess }: QRCodeLoginProps) {
       setSession(response.data);
       writeQRLoginSession(response.data);
     } catch (requestError) {
-      if (requestError instanceof Error && 'kind' in requestError && requestError.kind === 'aborted') return;
-      setError(getUserFacingErrorMessage(requestError, '二维码暂时无法生成'));
+      if (
+        requestError instanceof Error &&
+        "kind" in requestError &&
+        requestError.kind === "aborted"
+      )
+        return;
+      setError(getUserFacingErrorMessage(requestError, "二维码暂时无法生成"));
     } finally {
       setIsCreating(false);
     }
   }, []);
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(min-width: 768px)');
+    const mediaQuery = window.matchMedia("(min-width: 768px)");
     const handleChange = () => setIsDesktop(mediaQuery.matches);
 
     handleChange();
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
 
   useEffect(() => {
@@ -91,7 +102,7 @@ export function QRCodeLogin({ onLoginSuccess }: QRCodeLoginProps) {
       const storedSession = readQRLoginSession();
       if (storedSession) {
         setSession(storedSession);
-        setError('');
+        setError("");
         setIsCreating(false);
         return;
       }
@@ -104,9 +115,9 @@ export function QRCodeLogin({ onLoginSuccess }: QRCodeLoginProps) {
 
   useEffect(() => {
     if (
-      !isDesktop
-      || !session
-      || !['pending', 'scanned'].includes(session.status)
+      !isDesktop ||
+      !session ||
+      !["pending", "scanned"].includes(session.status)
     ) {
       return;
     }
@@ -114,20 +125,27 @@ export function QRCodeLogin({ onLoginSuccess }: QRCodeLoginProps) {
     const controller = new AbortController();
     let cancelled = false;
     let retryDelayMs = Math.max(500, session.pollIntervalMs || 1500);
-    const sleep = (delay: number) => new Promise<void>((resolve) => {
-      const timeoutId = window.setTimeout(resolve, delay);
-      controller.signal.addEventListener('abort', () => {
-        window.clearTimeout(timeoutId);
-        resolve();
-      }, { once: true });
-    });
+    const sleep = (delay: number) =>
+      new Promise<void>((resolve) => {
+        const timeoutId = window.setTimeout(resolve, delay);
+        controller.signal.addEventListener(
+          "abort",
+          () => {
+            window.clearTimeout(timeoutId);
+            resolve();
+          },
+          { once: true },
+        );
+      });
 
     const poll = async () => {
       while (!cancelled && !controller.signal.aborted) {
         await sleep(retryDelayMs);
         if (cancelled || controller.signal.aborted) return;
         try {
-          const response = await getQRSession(session.id, { signal: controller.signal });
+          const response = await getQRSession(session.id, {
+            signal: controller.signal,
+          });
           if (cancelled) return;
           const nextSession = {
             ...session,
@@ -135,19 +153,25 @@ export function QRCodeLogin({ onLoginSuccess }: QRCodeLoginProps) {
             qrContent: response.data.qrContent ?? session.qrContent,
           };
           setSession(nextSession);
-          setError('');
+          setError("");
           writeQRLoginSession(nextSession);
           retryDelayMs = Math.max(500, nextSession.pollIntervalMs || 1500);
-          if (!['pending', 'scanned'].includes(nextSession.status)) return;
+          if (!["pending", "scanned"].includes(nextSession.status)) return;
         } catch (requestError) {
-          if (cancelled || (requestError instanceof Error && 'kind' in requestError && requestError.kind === 'aborted')) return;
+          if (
+            cancelled ||
+            (requestError instanceof Error &&
+              "kind" in requestError &&
+              requestError.kind === "aborted")
+          )
+            return;
           if (isMissingQRSession(requestError)) {
             clearQRLoginSession();
             setSession(null);
-            setError('二维码会话已失效，请刷新二维码');
+            setError("二维码会话已失效，请刷新二维码");
             return;
           }
-          setError(getUserFacingErrorMessage(requestError, '扫码状态查询失败'));
+          setError(getUserFacingErrorMessage(requestError, "扫码状态查询失败"));
           retryDelayMs = Math.min(10_000, Math.max(1000, retryDelayMs * 2));
         }
       }
@@ -161,9 +185,9 @@ export function QRCodeLogin({ onLoginSuccess }: QRCodeLoginProps) {
 
   useEffect(() => {
     if (
-      !session
-      || session.status !== 'confirmed'
-      || claimedSessionIdRef.current === session.id
+      !session ||
+      session.status !== "confirmed" ||
+      claimedSessionIdRef.current === session.id
     ) {
       return;
     }
@@ -179,8 +203,15 @@ export function QRCodeLogin({ onLoginSuccess }: QRCodeLoginProps) {
         if (!cancelled) onLoginSuccess(response.data);
       })
       .catch((requestError) => {
-        if (!cancelled && !(requestError instanceof Error && 'kind' in requestError && requestError.kind === 'aborted')) {
-          setError(getUserFacingErrorMessage(requestError, '登录态换取失败'));
+        if (
+          !cancelled &&
+          !(
+            requestError instanceof Error &&
+            "kind" in requestError &&
+            requestError.kind === "aborted"
+          )
+        ) {
+          setError(getUserFacingErrorMessage(requestError, "登录态换取失败"));
         }
       })
       .finally(() => {
@@ -192,45 +223,50 @@ export function QRCodeLogin({ onLoginSuccess }: QRCodeLoginProps) {
     };
   }, [onLoginSuccess, session]);
 
-  useEffect(() => () => {
-    createAbortRef.current?.abort();
-    exchangeAbortRef.current?.abort();
-  }, []);
+  useEffect(
+    () => () => {
+      createAbortRef.current?.abort();
+      exchangeAbortRef.current?.abort();
+    },
+    [],
+  );
 
   if (!isDesktop) {
     return null;
   }
 
   const canRefresh = !isCreating && !isExchanging;
-  const statusMessage = error || (session ? getStatusMessage(session) : '');
-  const isExpired = session?.status === 'expired';
-  const isScanned = session?.status === 'scanned';
-  const isConfirmed = session?.status === 'confirmed';
-  const isError = Boolean(error) || session?.status === 'failed';
+  const statusMessage = error || (session ? getStatusMessage(session) : "");
+  const isExpired = session?.status === "expired";
+  const isScanned = session?.status === "scanned";
+  const isConfirmed = session?.status === "confirmed";
+  const isError = Boolean(error) || session?.status === "failed";
 
   return (
     <section className="login-qr-pane hidden min-h-[516px] flex-col items-center justify-center border-r border-border bg-transparent px-10 py-12 text-center md:flex">
       <BrandMark className="mb-5 text-3xl" />
-      <h1 className="text-2xl font-normal tracking-tight text-foreground">扫码登录</h1>
+      <h1 className="text-2xl font-normal tracking-tight text-foreground">
+        扫码登录
+      </h1>
       <p className="mt-2 text-sm text-muted-foreground">使用学习通 App 扫码</p>
 
       {/* Dynamic QR / Scanned Morphing Card */}
       {isScanned || isConfirmed ? (
         <div className="mt-7 flex h-[208px] w-[208px] flex-col items-center justify-center gap-3 rounded-2xl border border-primary/20 bg-primary-container/20 p-4 shadow-sm backdrop-blur-xs animate-in fade-in-0 duration-300 ease-emphasized motion-reduce:animate-none">
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold text-lg shadow-sm">
-            {session?.scannedName ? session.scannedName.substring(0, 1) : '通'}
+            {session?.scannedName ? session.scannedName.substring(0, 1) : "通"}
           </div>
           <div className="flex flex-col items-center gap-0.5">
             <span className="text-sm font-semibold text-foreground truncate max-w-[170px]">
-              {session?.scannedName || '学习通账号'}
+              {session?.scannedName || "学习通账号"}
             </span>
             <span className="text-xs text-muted-foreground">
-              {isConfirmed ? '已确认，跳转中...' : '已扫码，请在手机端确认'}
+              {isConfirmed ? "已确认，跳转中..." : "已扫码，请在手机端确认"}
             </span>
           </div>
           <div className="flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium text-primary shadow-xs">
             <span className="h-2 w-2 rounded-full bg-primary" />
-            <span>{isConfirmed ? '验证通过' : '等待确认'}</span>
+            <span>{isConfirmed ? "验证通过" : "等待确认"}</span>
           </div>
         </div>
       ) : (
@@ -250,10 +286,19 @@ export function QRCodeLogin({ onLoginSuccess }: QRCodeLoginProps) {
               role="status"
               aria-label="正在生成二维码"
             >
-              <circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="4" />
+              <circle
+                className="path"
+                cx="25"
+                cy="25"
+                r="20"
+                fill="none"
+                strokeWidth="4"
+              />
             </svg>
           ) : error ? (
-            <p className="px-4 text-sm leading-6 text-danger">二维码暂时无法生成</p>
+            <p className="px-4 text-sm leading-6 text-danger">
+              二维码暂时无法生成
+            </p>
           ) : null}
 
           {isError && (
@@ -262,9 +307,7 @@ export function QRCodeLogin({ onLoginSuccess }: QRCodeLoginProps) {
               aria-live="polite"
               role="alert"
             >
-              <p className="text-sm leading-6 text-danger">
-                {statusMessage}
-              </p>
+              <p className="text-sm leading-6 text-danger">{statusMessage}</p>
             </div>
           )}
 

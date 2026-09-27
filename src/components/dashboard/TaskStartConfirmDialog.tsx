@@ -17,7 +17,13 @@ interface TaskStartConfirmDialogProps {
   onConfirm: () => void;
 }
 
-export function TaskStartConfirmDialog({ open, summary, warnings, onOpenChange, onConfirm }: TaskStartConfirmDialogProps) {
+export function TaskStartConfirmDialog({
+  open,
+  summary,
+  warnings,
+  onOpenChange,
+  onConfirm,
+}: TaskStartConfirmDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
@@ -45,7 +51,12 @@ export function TaskStartConfirmDialog({ open, summary, warnings, onOpenChange, 
         )}
 
         <DialogFooter className="flex-row justify-end gap-2 pt-2">
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="h-9 px-4 text-xs font-medium">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            className="h-9 px-4 text-xs font-medium"
+          >
             取消
           </Button>
           <Button
