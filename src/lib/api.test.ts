@@ -59,6 +59,24 @@ describe('api boundary', () => {
     );
   });
 
+  it('reports a request timeout and aborts the underlying fetch', async () => {
+    const fetchMock = vi.fn((_input: RequestInfo | URL, init?: RequestInit) =>
+      new Promise<Response>((_, reject) => {
+        init?.signal?.addEventListener('abort', () => {
+          reject(new DOMException('Aborted', 'AbortError'));
+        });
+      }),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(apiRequest('/slow', { timeoutMs: 10 })).rejects.toMatchObject({
+      kind: 'timeout',
+      status: 0,
+      message: '请求超时 (10ms)',
+    });
+    expect(fetchMock).toHaveBeenCalledOnce();
+  });
+
   it('reads course summaries using the documented response shape', async () => {
     vi.stubGlobal(
       'fetch',
