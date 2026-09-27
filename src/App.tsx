@@ -30,7 +30,21 @@ function AuthRestoreScreen() {
       aria-busy="true"
     >
       <div className="flex flex-col items-center gap-4 text-muted-foreground">
-        <span className="google-spinner" role="status" aria-label="加载中" />
+        <svg
+          className="google-spinner"
+          viewBox="0 0 50 50"
+          role="status"
+          aria-label="加载中"
+        >
+          <circle
+            className="path"
+            cx="25"
+            cy="25"
+            r="20"
+            fill="none"
+            strokeWidth="4"
+          />
+        </svg>
         <span className="text-xs font-medium">加载中...</span>
       </div>
     </div>
