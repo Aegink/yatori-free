@@ -7,7 +7,7 @@ export default {
   fetch(request: Request, env: Env): Promise<Response> {
     if (env.MAINTENANCE_MODE?.trim() === "1") {
       return Promise.resolve(
-        new Response("Service Unavailable", {
+        new Response(null, {
           status: 503,
           headers: {
             "Cache-Control": "no-store",

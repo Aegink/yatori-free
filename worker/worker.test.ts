@@ -11,6 +11,7 @@ describe("maintenance mode", () => {
     })
 
     expect(response.status).toBe(503)
+    await expect(response.text()).resolves.toBe("")
     expect(response.headers.get("Cache-Control")).toBe("no-store")
     expect(fetch).not.toHaveBeenCalled()
   })
