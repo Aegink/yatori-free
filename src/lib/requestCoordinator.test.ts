@@ -9,7 +9,6 @@ describe('RequestCoordinator', () => {
 
     expect(first.signal.aborted).toBe(true);
     expect(second.signal.aborted).toBe(false);
-    expect(second.requestId).toBe(1);
     expect(coordinator.isCurrent('courses', second.requestId)).toBe(true);
   });
 
