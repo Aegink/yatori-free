@@ -359,6 +359,7 @@ export interface EmailNotificationSettings {
   verified: boolean;
   enabled: boolean;
   verifiedAt: string | null;
+  deadlineReminderMinutes: number[];
 }
 
 export interface RequestEmailVerificationRequest {
@@ -371,6 +372,10 @@ export interface ConfirmEmailVerificationRequest {
 
 export interface UpdateEmailNotificationRequest {
   enabled: boolean;
+}
+
+export interface UpdateDeadlineEmailNotificationRequest {
+  reminderMinutes: number[];
 }
 
 export interface LoginRequest {
@@ -1084,6 +1089,27 @@ export function updateEmailNotification(
 ) {
   return apiRequest<EmailNotificationSettings>(
     '/notifications/email',
+    {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    },
+    true,
+  );
+}
+
+export function getDeadlineEmailNotificationSettings() {
+  return apiRequest<EmailNotificationSettings>(
+    '/notifications/email/deadline',
+    undefined,
+    true,
+  );
+}
+
+export function updateDeadlineEmailNotification(
+  payload: UpdateDeadlineEmailNotificationRequest,
+) {
+  return apiRequest<EmailNotificationSettings>(
+    '/notifications/email/deadline',
     {
       method: 'PUT',
       body: JSON.stringify(payload),
