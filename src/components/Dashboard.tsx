@@ -525,12 +525,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ session, onLogout }) => {
       : visibleCourses;
   }, [courseSearchQuery, visibleCourses]);
 
-  const incompleteSelectableCourses = visibleCourses.filter((course) => {
-    if (course.processing) return false;
-    if (typeof course.jobCount !== 'number' || typeof course.jobFinishCount !== 'number') return false;
-    return course.jobFinishCount < course.jobCount;
-  });
-
   const estimatedTaskDuration = useMemo(() => {
     if (selectedCourses.size === 0) return null;
 
@@ -1032,7 +1026,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ session, onLogout }) => {
             coursesError={coursesError}
             courseSearch={courseSearch}
             courseSearchQuery={courseSearchQuery}
-            incompleteSelectableCourses={incompleteSelectableCourses}
             selectedCourses={selectedCourses}
             selectedWorks={selectedWorks}
             selectedExams={selectedExams}

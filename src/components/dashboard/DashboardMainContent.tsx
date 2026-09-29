@@ -33,7 +33,6 @@ interface DashboardMainContentProps {
   coursesError: string | null;
   courseSearch: string;
   courseSearchQuery: string;
-  incompleteSelectableCourses: CourseSummary[];
   selectedCourses: Set<string>;
   selectedWorks: Record<string, Set<string>>;
   selectedExams: Record<string, Set<string>>;
@@ -90,7 +89,6 @@ export function DashboardMainContent({
   coursesError,
   courseSearch,
   courseSearchQuery,
-  incompleteSelectableCourses,
   selectedCourses,
   selectedWorks,
   selectedExams,
