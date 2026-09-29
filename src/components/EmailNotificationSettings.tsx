@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { X } from "lucide-react";
+import { BellRing, CheckCircle2, Clock3, Mail, Plus, X } from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -235,30 +235,22 @@ export function EmailNotificationSettings({
     parsedReminderMinutes >= 1 &&
     parsedReminderMinutes <= MAX_DEADLINE_MINUTES &&
     !deadlineReminderMinutes.includes(parsedReminderMinutes);
-  const statusText = !settings?.available
-    ? "邮件服务暂不可用"
-    : hasPendingEmail
-      ? `待验证：${settings.pendingEmail}`
-      : hasVerifiedEmail
-        ? `已验证：${settings.email}`
-        : "验证邮箱后可接收邮件";
-
   return (
     <div className="space-y-2">
-      <div className="space-y-3 rounded-xl border border-border/60 bg-muted/20 p-3.5 shadow-xs sm:space-y-4 sm:p-5">
-        <div className="flex items-center justify-between gap-4">
-          <div className="min-w-0 space-y-1 pr-3 sm:pr-4">
+      <div className="overflow-hidden rounded-xl border border-border/60 bg-muted/20 shadow-xs">
+        <div className="flex items-start gap-3 border-b border-border/40 px-3.5 py-4 sm:px-5">
+          <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary-container text-primary">
+            <Mail aria-hidden="true" className="size-4" />
+          </span>
+          <div className="min-w-0 flex-1 space-y-1">
             <Label
               htmlFor="emailNotificationEnabled"
               className="block cursor-pointer text-sm font-semibold text-foreground"
             >
               邮件通知总开关
             </Label>
-            <p
-              className="truncate text-xs leading-relaxed text-muted-foreground"
-              title={hasPendingEmail ? settings?.pendingEmail : undefined}
-            >
-              {statusText}
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              用于接收任务结果和临期提醒
             </p>
           </div>
           <Switch
@@ -273,11 +265,19 @@ export function EmailNotificationSettings({
         </div>
 
         {pendingAction === "load" ? (
-          <p className="text-xs text-muted-foreground">正在读取邮箱设置...</p>
+          <p className="px-3.5 py-4 text-xs text-muted-foreground sm:px-5">
+            正在读取邮箱设置...
+          </p>
         ) : (
-          <div className="animate-in fade-in-0 slide-in-from-top-1 duration-280 ease-emphasized motion-reduce:animate-none">
+          <div className="animate-in fade-in-0 slide-in-from-top-1 px-3.5 py-4 duration-280 ease-emphasized motion-reduce:animate-none sm:px-5">
+            <div className="mb-3 flex items-center gap-2 text-xs text-muted-foreground">
+              {hasVerifiedEmail ? (
+                <CheckCircle2 aria-hidden="true" className="size-3.5 text-success" />
+              ) : null}
+              <span>{hasVerifiedEmail ? `已验证：${settings?.email}` : "验证邮箱后即可开启通知"}</span>
+            </div>
             <div
-              className={`grid grid-cols-1 gap-2.5 border-t border-border/40 pt-3 sm:gap-3 sm:pt-4 ${hasPendingEmail ? "lg:grid-cols-2 lg:gap-4" : ""}`}
+              className={`grid grid-cols-1 gap-2.5 ${hasPendingEmail ? "lg:grid-cols-2 lg:gap-4" : ""}`}
             >
               <form
                 className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] gap-2"
@@ -338,12 +338,13 @@ export function EmailNotificationSettings({
         )}
       </div>
 
-      <div className="flex items-center justify-between gap-4 rounded-xl border border-border/60 bg-muted/20 p-3.5 shadow-xs sm:p-5">
-        <div className="min-w-0 space-y-1">
+      <div className="flex items-start gap-3 rounded-xl border border-border/60 bg-muted/20 p-3.5 shadow-xs sm:p-5">
+        <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+          <CheckCircle2 aria-hidden="true" className="size-4" />
+        </span>
+        <div className="min-w-0 flex-1 space-y-1">
           <h3 className="text-sm font-semibold text-foreground">任务状态通知</h3>
-          <p className="text-xs leading-relaxed text-muted-foreground">
-            任务成功或失败时发送，跟随邮件通知总开关
-          </p>
+          <p className="text-xs leading-relaxed text-muted-foreground">任务成功或失败时发送邮件通知</p>
         </div>
         <Switch
           checked
@@ -358,28 +359,43 @@ export function EmailNotificationSettings({
         />
       </div>
 
-      <div className="space-y-3 rounded-xl border border-border/60 bg-muted/20 p-3.5 shadow-xs sm:space-y-4 sm:p-5">
-        <div className="min-w-0 space-y-1">
-          <h3 className="text-sm font-semibold text-foreground">
-            临期未完成通知
-          </h3>
-          <p className="text-xs leading-relaxed text-muted-foreground">
-            未完成作业、考试及含未完成任务点的课程结课前发送
-          </p>
+      <div className="overflow-hidden rounded-xl border border-border/60 bg-muted/20 shadow-xs">
+        <div className="flex items-start gap-3 border-b border-border/40 px-3.5 py-4 sm:px-5">
+          <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary-container text-primary">
+            <BellRing aria-hidden="true" className="size-4" />
+          </span>
+          <div className="min-w-0 flex-1 space-y-1">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+              <h3 className="text-sm font-semibold text-foreground">
+                临期未完成通知
+              </h3>
+              <span className="text-[11px] font-medium text-muted-foreground">
+                {deadlineReminderMinutes.length}/{MAX_DEADLINE_REMINDERS} 条提醒
+              </span>
+            </div>
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              在截止或结课前，提醒你处理未完成的作业、考试和课程任务点。
+            </p>
+          </div>
         </div>
 
         {pendingAction === "load" ? (
-          <p className="text-xs text-muted-foreground">正在读取提醒设置...</p>
+          <p className="px-3.5 py-4 text-xs text-muted-foreground sm:px-5">
+            正在读取提醒设置...
+          </p>
         ) : (
-          <div className="space-y-3 border-t border-border/40 pt-3 sm:pt-4">
+          <div className="space-y-4 px-3.5 py-4 sm:px-5">
             {deadlineReminderMinutes.length > 0 && (
-              <div className="flex flex-wrap gap-2" aria-live="polite">
+              <div className="grid gap-2 sm:grid-cols-2" aria-live="polite">
                 {deadlineReminderMinutes.map((minutes) => (
-                  <span
+                  <div
                     key={minutes}
-                    className="inline-flex items-center gap-1 rounded-md border border-border/70 bg-background px-2 py-1 text-xs text-foreground"
+                    className="flex items-center gap-3 rounded-lg border border-border/60 bg-background px-3 py-2.5"
                   >
-                    {formatReminderTime(minutes)}前
+                    <Clock3 aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
+                    <span className="min-w-0 flex-1 text-sm text-foreground">
+                      提前 <span className="font-semibold">{formatReminderTime(minutes)}</span> 通知
+                    </span>
                     <Button
                       type="button"
                       size="icon-xs"
@@ -390,46 +406,45 @@ export function EmailNotificationSettings({
                     >
                       <X aria-hidden="true" />
                     </Button>
-                  </span>
+                  </div>
                 ))}
               </div>
             )}
 
             <form
-              className="grid grid-cols-[minmax(0,1fr)_auto] gap-2"
+              className="rounded-lg border border-dashed border-border/70 bg-background/60 p-3"
               onSubmit={handleAddDeadlineReminder}
             >
-              <Label htmlFor="deadlineReminderMinutes" className="sr-only">
-                提前分钟数
-              </Label>
-              <div className="flex min-w-0 items-center gap-2">
-                <Input
-                  id="deadlineReminderMinutes"
-                  type="number"
-                  min={1}
-                  max={MAX_DEADLINE_MINUTES}
-                  step={1}
-                  value={newReminderMinutes}
-                  disabled={!hasVerifiedEmail || !settings?.available || isBusy}
-                  onChange={(event) => setNewReminderMinutes(event.target.value)}
-                  className="min-w-0 flex-1 bg-background text-[13px] md:text-[13px]"
-                />
-                <span className="shrink-0 text-xs text-muted-foreground">
-                  分钟
-                </span>
+              <div className="mb-2 flex items-center gap-2 text-xs font-medium text-foreground">
+                <Plus aria-hidden="true" className="size-3.5 text-primary" />
+                添加新的提醒时间
               </div>
-              <Button
-                type="submit"
-                variant="outline"
-                disabled={
-                  !hasVerifiedEmail ||
-                  !settings?.available ||
-                  isBusy ||
-                  !canAddReminder
-                }
-              >
-                添加提醒
-              </Button>
+              <div className="flex min-w-0 gap-2">
+                <Label htmlFor="deadlineReminderMinutes" className="sr-only">
+                  提前分钟数
+                </Label>
+                <div className="flex min-w-0 flex-1 items-center gap-2">
+                  <Input
+                    id="deadlineReminderMinutes"
+                    type="number"
+                    min={1}
+                    max={MAX_DEADLINE_MINUTES}
+                    step={1}
+                    value={newReminderMinutes}
+                    disabled={!hasVerifiedEmail || !settings?.available || isBusy}
+                    onChange={(event) => setNewReminderMinutes(event.target.value)}
+                    className="min-w-0 bg-background text-[13px] md:text-[13px]"
+                  />
+                  <span className="shrink-0 text-xs text-muted-foreground">分钟前</span>
+                </div>
+                <Button
+                  type="submit"
+                  variant="outline"
+                  disabled={!hasVerifiedEmail || !settings?.available || isBusy || !canAddReminder}
+                >
+                  添加
+                </Button>
+              </div>
             </form>
           </div>
         )}
