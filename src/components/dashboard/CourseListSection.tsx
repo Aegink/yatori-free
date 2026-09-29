@@ -1,4 +1,4 @@
-import { useRef, type MouseEvent } from 'react';
+import { useRef, type MouseEvent, type ReactNode } from 'react';
 import {
   AlertCircle,
   ChevronDown,
@@ -57,6 +57,36 @@ function formatCourseDate(value?: string) {
         .replaceAll('/', '-');
 }
 
+function highlightCourseName(courseName: string, searchTerm: string): ReactNode {
+  const query = searchTerm.trim().toLocaleLowerCase();
+  if (!query) return courseName;
+
+  const lowerCourseName = courseName.toLocaleLowerCase();
+  const parts: ReactNode[] = [];
+  let cursor = 0;
+
+  while (cursor < courseName.length) {
+    const matchIndex = lowerCourseName.indexOf(query, cursor);
+    if (matchIndex < 0) break;
+    if (matchIndex > cursor) {
+      parts.push(courseName.slice(cursor, matchIndex));
+    }
+    parts.push(
+      <mark
+        key={matchIndex}
+        className="rounded-sm bg-primary-container px-0.5 text-foreground"
+      >
+        {courseName.slice(matchIndex, matchIndex + query.length)}
+      </mark>,
+    );
+    cursor = matchIndex + query.length;
+  }
+
+  if (cursor === 0) return courseName;
+  if (cursor < courseName.length) parts.push(courseName.slice(cursor));
+  return parts;
+}
+
 export function CourseListSection({
   accountId,
   courses,
@@ -94,8 +124,8 @@ export function CourseListSection({
               课程列表
             </CardTitle>
           </div>
-          <div className="flex min-w-0 flex-1 items-center justify-end gap-1.5 sm:gap-2">
-            <div className="group relative min-w-0 flex-1 sm:max-w-xs">
+          <div className="flex min-w-0 flex-1 items-center justify-between gap-1.5 sm:gap-2">
+            <div className="group relative min-w-0 flex-1 sm:max-w-md">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground transition-colors duration-200 group-focus-within:text-primary" />
               <Input
                 type="search"
@@ -273,7 +303,7 @@ export function CourseListSection({
                             <div className="min-w-0 sm:w-52 sm:shrink-0 lg:w-56">
                               <div className="flex min-w-0 flex-wrap items-center gap-2">
                                 <h3 className="truncate text-xs font-semibold text-foreground sm:text-sm">
-                                  {course.courseName}
+                                  {highlightCourseName(course.courseName, courseSearchQuery)}
                                 </h3>
                                 {isProcessing && (
                                   <Badge

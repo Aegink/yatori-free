@@ -206,8 +206,26 @@ export function DashboardMainContent({
           <div data-dashboard-tab-content>
             {activeTab === 'courses' && (
               <CourseProgressSummary
-                visibleCount={courses.length}
-                incompleteCount={incompleteSelectableCourses.length}
+                totalTaskPointCount={courses.reduce(
+                  (total, course) => total + Math.max(0, course.jobCount ?? 0),
+                  0,
+                )}
+                completedTaskPointCount={courses.reduce(
+                  (total, course) =>
+                    total + Math.min(
+                      Math.max(0, course.jobFinishCount ?? 0),
+                      Math.max(0, course.jobCount ?? 0),
+                    ),
+                  0,
+                )}
+                incompleteTaskPointCount={courses.reduce(
+                  (total, course) =>
+                    total + Math.max(
+                      0,
+                      (course.jobCount ?? 0) - (course.jobFinishCount ?? 0),
+                    ),
+                  0,
+                )}
                 activeTaskCount={taskCounts.active}
               />
             )}

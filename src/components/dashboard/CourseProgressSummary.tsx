@@ -1,19 +1,20 @@
 import { Card, CardContent } from '@/components/ui/card';
 
 interface CourseProgressSummaryProps {
-  visibleCount: number;
-  incompleteCount: number;
+  totalTaskPointCount: number;
+  completedTaskPointCount: number;
+  incompleteTaskPointCount: number;
   activeTaskCount: number;
 }
 
 export function CourseProgressSummary({
-  visibleCount,
-  incompleteCount,
+  totalTaskPointCount,
+  completedTaskPointCount,
+  incompleteTaskPointCount,
   activeTaskCount,
 }: CourseProgressSummaryProps) {
-  const completedCount = Math.max(visibleCount - incompleteCount, 0);
-  const percent = visibleCount
-    ? Math.round((completedCount / visibleCount) * 100)
+  const percent = totalTaskPointCount
+    ? Math.round((completedTaskPointCount / totalTaskPointCount) * 100)
     : 0;
 
   return (
@@ -31,11 +32,11 @@ export function CourseProgressSummary({
             </div>
             <div className="flex items-center gap-2">
               <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
-                {completedCount} / {visibleCount} 门已完成
+                {completedTaskPointCount} / {totalTaskPointCount} 个任务点已完成
               </span>
-              {incompleteCount > 0 && (
+              {incompleteTaskPointCount > 0 && (
                 <span className="inline-flex items-center rounded-full border border-warning/20 bg-warning-container/30 px-1.5 py-0.2 text-[10px] font-medium text-warning sm:hidden">
-                  {incompleteCount} 待处理
+                  {incompleteTaskPointCount} 个待处理任务点
                 </span>
               )}
             </div>
@@ -48,10 +49,10 @@ export function CourseProgressSummary({
           </div>
         </div>
         <div className="hidden shrink-0 items-center gap-2 sm:flex">
-          {incompleteCount > 0 && (
+          {incompleteTaskPointCount > 0 && (
             <span className="inline-flex items-center gap-1.5 rounded-full border border-warning/25 bg-warning-container/30 px-2.5 py-0.5 text-xs font-medium text-warning">
               <span className="h-1.5 w-1.5 rounded-full bg-warning" />
-              {incompleteCount} 待处理
+              {incompleteTaskPointCount} 个待处理任务点
             </span>
           )}
           {activeTaskCount > 0 && (
