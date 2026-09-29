@@ -5,7 +5,7 @@ node_modules/
 # Build output and tool caches
 dist/
 dist-ssr/
-.wrangler/
+.cloudflare/
 .playwright-mcp/
 .playwright-cli/
 .tmp/
